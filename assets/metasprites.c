@@ -12,11 +12,11 @@ const unsigned char metasprite_0_data[]={
 
 const unsigned char metasprite_1_data[]={
 
-                                          - 3,-16,0x01,2,
-                                          - 3,- 8,0x11,2,
-                                          0x80
+                                         - 3,-16,0x01,2,
+                                         - 3,- 8,0x11,2,
+                                         0x80
 
- };
+};
 
 const unsigned char metasprite_2_data[]={
 
@@ -32,34 +32,34 @@ const unsigned char metasprite_3_data[]={
                                          - 3,- 8,0x11,2|OAM_FLIP_H,
                                          0x80
 
- };
+};
 
 const unsigned char metasprite_4_data[]={
 
                                          - 3,-12,0x02,3,
                                          0x80
 
- };
+};
 
 const unsigned char metasprite_5_data[]={
 
-                                          0,-16,0x03,1|OAM_FLIP_H,
-                                          - 8,-16,0x04,1|OAM_FLIP_H,
-                                          0,- 8,0x13,1|OAM_FLIP_H,
-                                          - 8,- 8,0x14,1|OAM_FLIP_H,
-                                          0x80
+                                         0,-16,0x03,1|OAM_FLIP_H,
+                                         - 8,-16,0x04,1|OAM_FLIP_H,
+                                         0,- 8,0x13,1|OAM_FLIP_H,
+                                         - 8,- 8,0x14,1|OAM_FLIP_H,
+                                         0x80
 
- };
+};
 
 const unsigned char metasprite_6_data[]={
 
-                                          0,-16,0x05,1|OAM_FLIP_H,
-                                          - 8,-16,0x06,1|OAM_FLIP_H,
-                                          0,- 8,0x15,1|OAM_FLIP_H,
-                                          - 8,- 8,0x16,1|OAM_FLIP_H,
-                                          0x80
+                                         0,-16,0x05,1|OAM_FLIP_H,
+                                         - 8,-16,0x06,1|OAM_FLIP_H,
+                                         0,- 8,0x15,1|OAM_FLIP_H,
+                                         - 8,- 8,0x16,1|OAM_FLIP_H,
+                                         0x80
 
- };
+};
 
 const unsigned char metasprite_7_data[]={
 
@@ -69,7 +69,7 @@ const unsigned char metasprite_7_data[]={
                                          0,- 8,0x14,1,
                                          0x80
 
- };
+};
 
 const unsigned char metasprite_8_data[]={
 
@@ -79,7 +79,7 @@ const unsigned char metasprite_8_data[]={
                                          0,- 8,0x16,1,
                                          0x80
 
- };
+};
 
 const unsigned char metasprite_9_data[]={
 
@@ -89,7 +89,7 @@ const unsigned char metasprite_9_data[]={
                                          - 8,- 8,0x18,0|OAM_FLIP_H,
                                          0x80
 
- };
+};
 
 const unsigned char metasprite_10_data[]={
 
@@ -99,7 +99,7 @@ const unsigned char metasprite_10_data[]={
                                           - 8,- 8,0x1a,0|OAM_FLIP_H,
                                           0x80
 
- };
+};
 
 const unsigned char metasprite_11_data[]={
 
@@ -109,7 +109,7 @@ const unsigned char metasprite_11_data[]={
                                           0,- 8,0x18,0,
                                           0x80
 
- };
+};
 
 const unsigned char metasprite_12_data[]={
 
@@ -119,7 +119,7 @@ const unsigned char metasprite_12_data[]={
                                           0,- 8,0x1a,0,
                                           0x80
 
- };
+};
 
 const unsigned char metasprite_13_data[]={
 
@@ -133,13 +133,13 @@ const unsigned char metasprite_13_data[]={
                                           0,-24,0x1d,1,
                                           8,-24,0x1e,0,
 
-                                          -16,-16,0x1b,0,
-                                          8,-16,0x1e,0,
-                                          -16,- 8,0x1b,0,
-                                          8,- 8,0x1e,0,
+                                          -16,-16,0x0f,0,
+                                          8,-16,0x1f,0,
+                                          -16,- 8,0x0f,0,
+                                          8,- 8,0x1f,0,
                                           0x80
 
- };
+};
 
 const unsigned char* const metasprite_list[]={
 
