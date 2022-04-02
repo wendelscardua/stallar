@@ -27,7 +27,8 @@ ${TARGET}: MMC3.cfg \
            assets/nametables.o \
            assets/palettes.o \
            assets/sprites.o \
-           assets/metatiles.o
+           assets/metatiles.o \
+           assets/metasprites.o
 	ld65 -C $^ nes.lib -m map.txt -o ${TARGET} ${LD65_FLAGS}
 
 %.o: %.s
@@ -79,6 +80,9 @@ assets/sprites.o: assets/sprites.s assets/sprites.h
 
 assets/metatiles.o: assets/metatiles.s
 	ca65 $< ${CA65_FLAGS}
+
+assets/metasprites.s: assets/metasprites.c src/constants.h
+	cc65 $< ${CA65_FLAGS}
 
 src/music/soundtrack.s: src/music/soundtrack.txt
 	${TEXT2DATA} $^ -ca65 -allin

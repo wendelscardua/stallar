@@ -8,4 +8,5 @@ src/main.s
 src/nametable_loader.s
 src/temp.s
 src/wram.s
+assets/metasprites.s
 tools/ld65-map.json
