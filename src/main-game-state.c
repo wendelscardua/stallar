@@ -14,7 +14,7 @@
 
 #define INITIAL_H_SPEED FP(0, 1, 0)
 #define MAX_H_SPEED FP(0, 2, 0)
-#define H_ACCEL FP(0, 0, 0x04)
+#define H_ACCEL FP(0, 0, 0x08)
 #define FRICTION FP(0, 0, 0x20)
 
 #pragma bss-name(push, "ZEROPAGE")

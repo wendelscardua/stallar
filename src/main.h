@@ -24,16 +24,17 @@ extern game_state_t current_game_state;
 #include "game-over-game-state.h"
 
 /* fedc ba98 7654 3210
- * f: 0 for left nametable, 1 for right nametable
- * e..7: integer pixel
- * 6..0: subpixel
+ * fe gives a range of 4 screens for loaded objects
+ * e: 0 for left nametable, 1 for right nametable
+ * d..6: integer pixel
+ * 5..0: subpixel
  */
 
 // converts 3 uint8 into a single uint16
-#define FP(screen,integer,fraction) (((screen) << 15)|((integer)<<7)|((fraction)>>2))
+#define FP(screen,integer,fraction) (((screen) << 14)|((integer)<<6)|((fraction)>>3))
 
 // extract the integer part (including screen)
 // TODO: round insted of truncate?
-#define INT(unsigned_fixed_point) ((unsigned_fixed_point>>7)&0xff)
+#define INT(unsigned_fixed_point) ((unsigned_fixed_point>>6)&0xff)
 
 #endif
