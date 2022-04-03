@@ -1,19 +1,33 @@
 #include "lib/neslib.h"
 #include "lib/nesdoug.h"
+#include "directions.h"
 #include "main.h"
 #include "irq_buffer.h"
 #include "temp.h"
 #include "mmc3/mmc3_code.h"
+#include "../assets/metasprites.h"
 #include "../assets/metatiles.h"
 #include "../assets/nametables.h"
 #include "../assets/palettes.h"
 #include "../assets/levels.h"
 #include "music/soundtrack.h"
 
+#define INITIAL_SPEED FP(0, 1, 0)
+#define FRICTION FP(0, 0, 0x20)
+
 #pragma bss-name(push, "ZEROPAGE")
 unsigned char * current_level_ptr;
 unsigned char current_level_columns;
 unsigned char next_metatile_column;
+
+unsigned int player_x;
+unsigned int player_y;
+signed int player_dx;
+signed int player_dy;
+direction_t player_direction;
+
+unsigned int camera_x;
+
 #pragma bss-name(pop)
 
 #pragma bss-name(push, "BSS")
@@ -72,12 +86,51 @@ void main_start (void) {
 
   ppu_on_all(); //	turn on screen
   pal_fade_to(0, 4);
+
+  camera_x = FP(0, 0, 0);
+  player_x = FP(0, 0x30, 0x00);
+  player_y = FP(0, 0xcf, 0x00);
+  player_dx = 0;
+  player_dy = 0;
+  player_direction = Right;
 }
 
 void main_upkeep (void) {
+  if (pad1_new & PAD_RIGHT) {
+    player_direction = Right;
+    if (player_dx < INITIAL_SPEED) player_dx = INITIAL_SPEED;
+  }
+  if (pad1_new & PAD_LEFT) {
+    player_direction = Left;
+    if (player_dx > -INITIAL_SPEED) player_dx = -INITIAL_SPEED;
+  }
+
+  // update player
+  player_x += player_dx;
+  player_y += player_dy;
+
+  if (player_dx > 0) {
+    player_dx -= FRICTION;
+    if (player_dx < 0) player_dx = 0;
+  }
+  if (player_dx < 0) {
+    player_dx += FRICTION;
+    if (player_dx > 0) player_dx = 0;
+  }
+
+  set_scroll_x(INT(camera_x));
 }
 
 void main_sprites (void) {
+  temp_x = INT(player_x - camera_x);
+  temp_y = INT(player_y);
+  if (player_direction == Left) {
+    temp = 2;
+  } else {
+    temp = 0;
+  }
+  if (temp_x & 0b100) temp++;
+  oam_meta_spr(temp_x, temp_y, metasprite_list[temp]);
 }
 
 void select_level (void) {

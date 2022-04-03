@@ -19,9 +19,6 @@
 #include "../assets/palettes.h"
 #include "../assets/sprites.h"
 
-#define FP(integer,fraction) (((integer)<<8)|((fraction)>>0))
-#define INT(unsigned_fixed_point) ((unsigned_fixed_point>>8)&0xff)
-
 #pragma bss-name(push, "ZEROPAGE")
 
 // GLOBAL VARIABLES
@@ -80,7 +77,7 @@ void main (void) {
     double_buffer_index = 0;
 
     rand16();
-    pad_poll(0);
+    pad1 = pad_poll(0);
     pad1_new = get_pad_new(0);
 
     switch (current_game_state) {
