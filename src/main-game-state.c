@@ -17,7 +17,7 @@ unsigned char next_metatile_column;
 #pragma bss-name(pop)
 
 #pragma bss-name(push, "BSS")
-unsigned char attributes[30];
+unsigned char attributes[128];
 unsigned char first_column_stripe[30];
 unsigned char second_column_stripe[30];
 #pragma bss-name(pop)
@@ -89,7 +89,7 @@ void load_next_column (void) {
   if (next_metatile_column < 16) {
     temp_int = NTADR_A((next_metatile_column * 2), 0);
   } else {
-    temp_int = NTADR_C((next_metatile_column * 2 - 16), 0);
+    temp_int = NTADR_B(((next_metatile_column & 15) * 2), 0);
   }
 
   for(j = 0; j < 30; j += 2) {
@@ -104,7 +104,7 @@ void load_next_column (void) {
     temp_char = 0b11;
 
     temp_y = j >> 1;
-    temp_x = next_metatile_column;
+    temp_x = (next_metatile_column & 15);
     if (temp_y & 1) {
       temp_attr <<= 4;
       temp_char <<= 4;
@@ -121,8 +121,19 @@ void load_next_column (void) {
     }
     attributes[temp] = (attributes[temp] & (~temp_char)) | temp_attr;
   }
-  multi_vram_buffer_vert(first_column_stripe, 30, temp_int);
-  multi_vram_buffer_vert(second_column_stripe, 30, temp_int + 1);
+
+  multi_vram_buffer_vert((const char *)first_column_stripe, 30, temp_int);
+  multi_vram_buffer_vert((const char *)second_column_stripe, 30, temp_int + 1);
+
+  for(j = 0; j < 8; j++) {
+    temp = j * 8 + ((next_metatile_column & 15) >> 1);
+    if (next_metatile_column < 16) {
+      one_vram_buffer(attributes[temp], 0x23c0 + temp);
+    } else {
+      one_vram_buffer(attributes[temp], 0x27c0 + temp);
+    }
+  }
+
   --current_level_columns;
   next_metatile_column++;
   if (next_metatile_column == 32) next_metatile_column = 0;
