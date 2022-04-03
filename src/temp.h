@@ -3,7 +3,7 @@ extern unsigned char arg1;
 extern unsigned char arg2;
 extern unsigned char pad1;
 extern unsigned char pad1_new;
-extern unsigned char temp, i, temp_x, temp_y, temp_char, temp_attr, temp_bank;
+extern unsigned char temp, i, j, temp_x, temp_y, temp_char, temp_attr, temp_bank;
 extern unsigned int temp_int, temp_int_x, temp_int_y;
 
 #pragma zpsym("arg1")
@@ -12,6 +12,7 @@ extern unsigned int temp_int, temp_int_x, temp_int_y;
 #pragma zpsym("pad1_new")
 #pragma zpsym("temp")
 #pragma zpsym("i")
+#pragma zpsym("j")
 #pragma zpsym("temp_x")
 #pragma zpsym("temp_y")
 #pragma zpsym("temp_char")
