@@ -12,7 +12,9 @@
 #include "../assets/levels.h"
 #include "music/soundtrack.h"
 
-#define INITIAL_SPEED FP(0, 1, 0)
+#define INITIAL_H_SPEED FP(0, 1, 0)
+#define MAX_H_SPEED FP(0, 2, 0)
+#define H_ACCEL FP(0, 0, 0x04)
 #define FRICTION FP(0, 0, 0x20)
 
 #pragma bss-name(push, "ZEROPAGE")
@@ -98,11 +100,15 @@ void main_start (void) {
 void main_upkeep (void) {
   if (pad1_new & PAD_RIGHT) {
     player_direction = Right;
-    if (player_dx < INITIAL_SPEED) player_dx = INITIAL_SPEED;
+    if (player_dx < INITIAL_H_SPEED) player_dx = INITIAL_H_SPEED;
+  } else if (pad1 & PAD_RIGHT) {
+    if (player_dx < MAX_H_SPEED) player_dx += H_ACCEL + FRICTION;
   }
   if (pad1_new & PAD_LEFT) {
     player_direction = Left;
-    if (player_dx > -INITIAL_SPEED) player_dx = -INITIAL_SPEED;
+    if (player_dx > -INITIAL_H_SPEED) player_dx = -INITIAL_H_SPEED;
+  } else if (pad1 & PAD_LEFT) {
+    if (player_dx > -MAX_H_SPEED) player_dx -= H_ACCEL + FRICTION;
   }
 
   // update player
