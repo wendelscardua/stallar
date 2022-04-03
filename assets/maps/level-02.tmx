@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="16" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="5">
+ <tileset firstgid="1" source="metatiles.tsx"/>
+ <layer id="1" name="Tile Layer 1" width="16" height="15">
+  <data encoding="csv">
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,4,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,4,4,4,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,4,1,1,4,1,1,4,1,9,10,11,1,1,
+3,3,3,3,3,1,1,1,3,3,3,12,3,17,3,3,
+2,2,2,2,2,1,1,1,2,2,2,2,2,2,2,2,
+2,2,2,2,2,1,1,1,2,2,2,2,2,2,2,2
+</data>
+ </layer>
+ <objectgroup id="2" name="Object Layer 1">
+  <object id="1" type="star" x="103.121" y="166.279">
+   <point/>
+  </object>
+  <object id="2" type="star" x="102.841" y="56.1714">
+   <point/>
+  </object>
+  <object id="3" type="star" x="230.554" y="197.857">
+   <point/>
+  </object>
+  <object id="4" type="spike" x="84.6763" y="118.491" width="38.5654" height="4.75082"/>
+ </objectgroup>
+</map>
