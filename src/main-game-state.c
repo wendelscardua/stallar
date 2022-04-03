@@ -39,6 +39,8 @@ unsigned int camera_x;
 unsigned char attributes[128];
 unsigned char first_column_stripe[30];
 unsigned char second_column_stripe[30];
+unsigned char update_attributes_flag;
+
 #pragma bss-name(pop)
 
 #pragma rodata-name ("RODATA")
@@ -46,6 +48,7 @@ unsigned char second_column_stripe[30];
 
 void select_level (void);
 void load_next_column (void);
+void update_attributes (void);
 
 void main_start (void) {
   current_game_state = Main;
@@ -70,6 +73,9 @@ void main_start (void) {
   for(i = 0; i < 32; i++) { // TODO: at least 16 columns
     clear_vram_buffer();
     load_next_column();
+    flush_vram_update_nmi();
+    clear_vram_buffer();
+    update_attributes();
     flush_vram_update_nmi();
   }
   vram_adr(NTADR_A(0,0));
@@ -199,16 +205,23 @@ void load_next_column (void) {
   multi_vram_buffer_vert((const char *)first_column_stripe, 30, temp_int);
   multi_vram_buffer_vert((const char *)second_column_stripe, 30, temp_int + 1);
 
-  for(j = 0; j < 8; j++) {
-    temp = j * 8 + ((next_metatile_column & 15) >> 1);
-    if (next_metatile_column < 16) {
-      one_vram_buffer(attributes[temp], 0x23c0 + temp);
-    } else {
-      one_vram_buffer(attributes[temp], 0x27c0 + temp);
-    }
-  }
+  update_attributes_flag = next_metatile_column;
 
   --current_level_columns;
   next_metatile_column++;
   if (next_metatile_column == 32) next_metatile_column = 0;
+}
+
+void update_attributes (void) {
+  if (update_attributes_flag != 0xff) {
+    for(j = 0; j < 8; j++) {
+      temp = j * 8 + ((update_attributes_flag & 15) >> 1);
+      if (update_attributes_flag < 16) {
+        one_vram_buffer(attributes[temp], 0x23c0 + temp);
+      } else {
+        one_vram_buffer(attributes[temp], 0x27c0 + temp);
+      }
+    }
+    update_attributes_flag = 0xff;
+  }
 }
