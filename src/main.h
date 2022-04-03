@@ -35,6 +35,6 @@ extern game_state_t current_game_state;
 
 // extract the integer part (including screen)
 // TODO: round insted of truncate?
-#define INT(unsigned_fixed_point) ((unsigned_fixed_point>>6)&0xff)
+#define INT(unsigned_fixed_point) ((unsigned_fixed_point)>>6)
 
 #endif

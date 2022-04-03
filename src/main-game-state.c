@@ -17,6 +17,8 @@
 #define H_ACCEL FP(0, 0, 0x08)
 #define FRICTION FP(0, 0, 0x20)
 
+#define CAM_LIMIT FP(0, 0xa0, 0)
+
 #pragma bss-name(push, "ZEROPAGE")
 unsigned char * current_level_ptr;
 unsigned char current_level_columns;
@@ -124,7 +126,11 @@ void main_upkeep (void) {
     if (player_dx > 0) player_dx = 0;
   }
 
-  set_scroll_x(INT(camera_x));
+  if (player_x - camera_x > CAM_LIMIT) {
+    camera_x = player_x - CAM_LIMIT;
+  }
+
+  set_scroll_x((unsigned int) INT(camera_x));
 }
 
 void main_sprites (void) {
