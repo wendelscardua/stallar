@@ -17,7 +17,8 @@
 #define H_ACCEL FP(0, 0, 0x08)
 #define FRICTION FP(0, 0, 0x20)
 
-#define CAM_LIMIT FP(0, 0xa0, 0)
+#define CAM_R_LIMIT FP(0, 0xa0, 0)
+#define CAM_L_LIMIT FP(0, 0x10, 0)
 
 #pragma bss-name(push, "ZEROPAGE")
 unsigned char * current_level_ptr;
@@ -104,30 +105,38 @@ void main_upkeep (void) {
     player_direction = Right;
     if (player_dx < INITIAL_H_SPEED) player_dx = INITIAL_H_SPEED;
   } else if (pad1 & PAD_RIGHT) {
-    if (player_dx < MAX_H_SPEED) player_dx += H_ACCEL + FRICTION;
+    if (player_dx < MAX_H_SPEED) { player_dx += H_ACCEL; }
+    else { player_dx = MAX_H_SPEED; }
   }
   if (pad1_new & PAD_LEFT) {
     player_direction = Left;
     if (player_dx > -INITIAL_H_SPEED) player_dx = -INITIAL_H_SPEED;
   } else if (pad1 & PAD_LEFT) {
-    if (player_dx > -MAX_H_SPEED) player_dx -= H_ACCEL + FRICTION;
+    if (player_dx > -MAX_H_SPEED) { player_dx -= H_ACCEL; }
+    else { player_dx = -MAX_H_SPEED; }
   }
 
   // update player
   player_x += player_dx;
   player_y += player_dy;
 
-  if (player_dx > 0) {
-    player_dx -= FRICTION;
-    if (player_dx < 0) player_dx = 0;
-  }
-  if (player_dx < 0) {
-    player_dx += FRICTION;
-    if (player_dx > 0) player_dx = 0;
+  if (!(pad1 & (PAD_LEFT | PAD_RIGHT))) {
+    if (player_dx > 0) {
+      player_dx -= FRICTION;
+      if (player_dx < 0) player_dx = 0;
+    }
+    if (player_dx < 0) {
+      player_dx += FRICTION;
+      if (player_dx > 0) player_dx = 0;
+    }
   }
 
-  if (player_x - camera_x > CAM_LIMIT) {
-    camera_x = player_x - CAM_LIMIT;
+  if (player_x - camera_x > CAM_R_LIMIT) {
+    camera_x = player_x - CAM_R_LIMIT;
+  }
+
+  if (player_x - camera_x < CAM_L_LIMIT) {
+    player_x = camera_x + CAM_L_LIMIT;
   }
 
   set_scroll_x((unsigned int) INT(camera_x));
