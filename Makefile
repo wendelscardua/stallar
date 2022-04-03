@@ -28,6 +28,7 @@ ${TARGET}: MMC3.cfg \
            assets/palettes.o \
            assets/sprites.o \
            assets/metatiles.o \
+           assets/levels.o \
            assets/metasprites.o
 	ld65 -C $^ nes.lib -m map.txt -o ${TARGET} ${LD65_FLAGS}
 
@@ -81,8 +82,19 @@ assets/sprites.o: assets/sprites.s assets/sprites.h
 assets/metatiles.o: assets/metatiles.s
 	ca65 $< ${CA65_FLAGS}
 
+assets/levels.o: assets/levels.s \
+                 assets/maps/level-00.inc \
+                 assets/maps/level-01.inc \
+                 assets/maps/level-02.inc
+	ca65 $< ${CA65_FLAGS}
+
 assets/metatiles.s: assets/metatiles.map tools/generate-metatiles.rb
 	ruby tools/generate-metatiles.rb $< $@
+
+assets/level.s:
+
+assets/maps/%.inc: assets/maps/%.tmx tools/process-level.rb
+	ruby tools/process-level.rb $< $@
 
 assets/metasprites.s: assets/metasprites.c src/constants.h
 	cc65 $< ${CA65_FLAGS}

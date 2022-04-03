@@ -10,4 +10,5 @@ src/temp.s
 src/wram.s
 assets/metasprites.s
 assets/metatiles.s
+assets/maps/level-*.inc
 tools/ld65-map.json
