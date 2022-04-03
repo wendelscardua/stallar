@@ -19,4 +19,8 @@ extern game_state_t current_game_state;
 #define SPRITE_0 4
 #define SPRITE_1 6
 
+#include "title-game-state.h"
+#include "main-game-state.h"
+#include "game-over-game-state.h"
+
 #endif

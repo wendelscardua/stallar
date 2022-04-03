@@ -61,8 +61,9 @@ void main (void) {
   set_chr_mode_0(SPRITE_0);
   set_chr_mode_1(SPRITE_1);
 
-  // TODO: title game state
   ppu_on_all();
+
+  title_start(); // TODO: avoid possible glitch?
 
   unseeded = 1;
 
@@ -79,9 +80,20 @@ void main (void) {
     pad_poll(0);
     pad1_new = get_pad_new(0);
 
-    // TODO: game states
-    //switch (current_game_state) {
-    //}
+    switch (current_game_state) {
+    case Title:
+      title_upkeep();
+      if (current_game_state != Title) continue;
+      break;
+    case Main:
+      main_upkeep();
+      if (current_game_state != Main) continue;
+      break;
+    case GameOver:
+      game_over_upkeep();
+      if (current_game_state != GameOver) continue;
+      break;
+    }
 
 #ifdef DEBUG
     if (pad1_new & PAD_SELECT) gray_line_enabled = !gray_line_enabled;
@@ -91,8 +103,6 @@ void main (void) {
     // load the irq array with values it parse
     // ! CHANGED it, double buffered so we aren't editing the same
     // array that the irq system is reading from
-
-
     double_buffer[double_buffer_index++] = 0xff; // end of data
 
     draw_sprites();
@@ -118,14 +128,15 @@ void main (void) {
 void draw_sprites (void) {
   oam_clear();
 
-  /*
-    switch (current_game_state) {
-    case Title:
-    draw_title_sprites();
+  switch (current_game_state) {
+  case Title:
+    title_sprites();
     break;
-    case Main:
-    dungeon_draw_sprites();
+  case Main:
+    main_sprites();
     break;
-    }
-  */
+  case GameOver:
+    game_over_sprites();
+    break;
+  }
 }

@@ -24,6 +24,9 @@ ${TARGET}: MMC3.cfg \
            src/irq_buffer.o \
            src/temp.o \
            src/wram.o \
+           src/title-game-state.o \
+           src/main-game-state.o \
+           src/game-over-game-state.o \
            assets/nametables.o \
            assets/palettes.o \
            assets/sprites.o \
@@ -62,6 +65,15 @@ src/temp.s: src/temp.c
 
 src/wram.s: src/wram.c \
             src/lib/neslib.h
+	cc65 -Oirs $< --add-source ${CA65_FLAGS}
+
+src/title-game-state.s: src/title-game-state.c
+	cc65 -Oirs $< --add-source ${CA65_FLAGS}
+
+src/main-game-state.s: src/main-game-state.c
+	cc65 -Oirs $< --add-source ${CA65_FLAGS}
+
+src/game-over-game-state.s: src/game-over-game-state.c
 	cc65 -Oirs $< --add-source ${CA65_FLAGS}
 
 src/crt0.o: src/crt0.s src/mmc3/mmc3_code.asm src/lib/neslib.s src/lib/nesdoug.s assets/*.chr \

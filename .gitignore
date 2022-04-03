@@ -8,6 +8,7 @@ src/main.s
 src/nametable_loader.s
 src/temp.s
 src/wram.s
+src/*-game-state.s
 assets/metasprites.s
 assets/metatiles.s
 assets/maps/level-*.inc
