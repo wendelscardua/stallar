@@ -1,6 +1,6 @@
-# NES Template
+# Stallar
 
-A template for my NES games, using C and the MMC3 mapper, using nesdoug and neslib public domain libraries.
+NES game for the Ludum Dare 50 game jam (theme "Delay the Inevitable").
 
 ## Build dependencies
 
