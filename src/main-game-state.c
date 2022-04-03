@@ -107,6 +107,8 @@ void main_start (void) {
 }
 
 void main_upkeep (void) {
+  update_attributes();
+
   if (pad1_new & PAD_RIGHT) {
     player_direction = Right;
     if (player_dx < INITIAL_H_SPEED) player_dx = INITIAL_H_SPEED;
@@ -137,6 +139,7 @@ void main_upkeep (void) {
     }
   }
 
+  // update camera
   if (player_x - camera_x > CAM_R_LIMIT) {
     camera_x = player_x - CAM_R_LIMIT;
   }
@@ -145,7 +148,25 @@ void main_upkeep (void) {
     player_x = camera_x + CAM_L_LIMIT;
   }
 
-  set_scroll_x((unsigned int) INT(camera_x));
+  // check for column loading
+  temp_int_x = INT(camera_x);
+  set_scroll_x(temp_int_x);
+  temp_x = ((temp_int_x + 0x100) & 0x1ff) >> 4;
+
+  if (next_metatile_column == temp_x) {
+    if (current_level_columns == 0) {
+      temp = 1;
+      while(temp < num_levels) temp <<= 1;
+      temp--;
+      i = 0;
+      while(i == 0 || i >= num_levels) {
+        i = rand8() & temp;
+      }
+      current_level_ptr = (unsigned char *) levels[i];
+      select_level();
+    }
+    load_next_column();
+  }
 }
 
 void main_sprites (void) {
@@ -219,7 +240,7 @@ void update_attributes (void) {
       if (update_attributes_flag < 16) {
         one_vram_buffer(attributes[temp], 0x23c0 + temp);
       } else {
-        one_vram_buffer(attributes[temp], 0x27c0 + temp);
+        one_vram_buffer(attributes[temp + 64], 0x27c0 + temp);
       }
     }
     update_attributes_flag = 0xff;
