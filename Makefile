@@ -81,6 +81,9 @@ assets/sprites.o: assets/sprites.s assets/sprites.h
 assets/metatiles.o: assets/metatiles.s
 	ca65 $< ${CA65_FLAGS}
 
+assets/metatiles.s: assets/metatiles.map tools/generate-metatiles.rb
+	ruby tools/generate-metatiles.rb $< $@
+
 assets/metasprites.s: assets/metasprites.c src/constants.h
 	cc65 $< ${CA65_FLAGS}
 
