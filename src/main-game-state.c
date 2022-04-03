@@ -150,7 +150,7 @@ void main_sprites (void) {
   } else {
     temp = 0;
   }
-  if (temp_x & 0b100) temp++;
+  if (INT(player_x) & 0b100) temp++;
   oam_meta_spr(temp_x, temp_y, metasprite_list[temp]);
 }
 
