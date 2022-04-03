@@ -48,7 +48,7 @@ void main_start (void) {
   current_level_ptr = (unsigned char *) levels[0];
   select_level();
 
-  for(i = 0; i < 16; i++) { // TODO: at least 16 columns
+  for(i = 0; i < 32; i++) { // TODO: at least 16 columns
     clear_vram_buffer();
     load_next_column();
     flush_vram_update_nmi();
@@ -99,10 +99,31 @@ void load_next_column (void) {
     first_column_stripe[j+1] = metatiles[temp+2];
     second_column_stripe[j] = metatiles[temp+1];
     second_column_stripe[j+1] = metatiles[temp+3];
-    // TODO: attribute data
+
+    temp_attr = metatiles[temp+4];
+    temp_char = 0b11;
+
+    temp_y = j >> 1;
+    temp_x = next_metatile_column;
+    if (temp_y & 1) {
+      temp_attr <<= 4;
+      temp_char <<= 4;
+    }
+    if (temp_x & 1) {
+      temp_attr <<= 2;
+      temp_char <<= 2;
+    }
+    temp_y >>= 1;
+    temp_x >>= 1;
+    temp = temp_y * 8 + temp_x;
+    if (next_metatile_column >= 16) {
+      temp += 64;
+    }
+    attributes[temp] = (attributes[temp] & (~temp_char)) | temp_attr;
   }
   multi_vram_buffer_vert(first_column_stripe, 30, temp_int);
   multi_vram_buffer_vert(second_column_stripe, 30, temp_int + 1);
   --current_level_columns;
-  next_metatile_column = (next_metatile_column + 1) & 31;
+  next_metatile_column++;
+  if (next_metatile_column == 32) next_metatile_column = 0;
 }
