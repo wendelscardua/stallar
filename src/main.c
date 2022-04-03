@@ -43,7 +43,7 @@ game_state_t current_game_state;
 void draw_sprites (void);
 
 void main (void) {
-  set_mirroring(MIRROR_HORIZONTAL);
+  set_mirroring(MIRROR_VERTICAL);
   bank_spr(1);
   irq_array[0] = 0xff; // end of data
   set_irq_ptr(irq_array); // point to this array
