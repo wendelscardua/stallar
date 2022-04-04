@@ -483,13 +483,25 @@ void entity_blob_update() {
         (unsigned char) (TRUNC(player_y - FP(0, 13, 0))) <= (unsigned char) (temp_y - TRUNC(FP(0,3,0)))) {
       entity_state[i] = Inactive; // TODO: maybe dying?
       player_dy = JUMP_IMPULSE;
+      return;
     }
+  }
+  if ((unsigned char) (TRUNC(player_x + FP(0, 3, 0))) >= (unsigned char) (temp_x - TRUNC(FP(0,8,0))) &&
+      (unsigned char) (TRUNC(player_x - FP(0, 3, 0)))  <= (unsigned char) (temp_x + TRUNC(FP(0,8,0))) &&
+      (unsigned char) (TRUNC(player_y + FP(0, 0, 0)))  >= (unsigned char) (temp_y - TRUNC(FP(0,8,0))) &&
+      (unsigned char) (TRUNC(player_y - FP(0, 13, 0))) <= (unsigned char) (temp_y + TRUNC(FP(0,0,0)))) {
+    start_dying();
   }
 }
 
 void entity_spike_update() {
   entity_movable_update();
-  // TODO spike stuff
+  if ((unsigned char) (TRUNC(player_x + FP(0, 3, 0))) >= (unsigned char) (temp_x - TRUNC(FP(0,7,0))) &&
+      (unsigned char) (TRUNC(player_x - FP(0, 3, 0)))  <= (unsigned char) (temp_x + TRUNC(FP(0,7,0))) &&
+      (unsigned char) (TRUNC(player_y + FP(0, 0, 0)))  >= (unsigned char) (temp_y - TRUNC(FP(0,8,0))) &&
+      (unsigned char) (TRUNC(player_y - FP(0, 13, 0))) <= (unsigned char) (temp_y + TRUNC(FP(0,0,0)))) {
+    start_dying();
+  }
 }
 
 void entity_star_render() {
