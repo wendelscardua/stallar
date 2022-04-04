@@ -230,6 +230,8 @@ void update_player_x (void) {
 }
 
 void update_camera (void) {
+  set_scroll_x(0);
+
   // update camera
   if (player_x - camera_x > CAM_R_LIMIT) {
     camera_x = player_x - CAM_R_LIMIT;
@@ -241,7 +243,6 @@ void update_camera (void) {
 
   // check for column loading
   temp_int_x = INT(camera_x);
-  set_scroll_x(temp_int_x);
   temp_x = ((temp_int_x + 0x100) & 0x1ff) >> 4;
 
   if (next_metatile_column == temp_x) {
@@ -275,6 +276,15 @@ void update_entities (void) {
 }
 
 void main_upkeep (void) {
+  // irq scroll
+  double_buffer[double_buffer_index++] = 0x1f - 1;
+  temp_int = INT(camera_x);
+  double_buffer[double_buffer_index++] = 0xf0;
+  double_buffer[double_buffer_index++] = 0b10001000 | (TRUNC(camera_x) >= 0x80);
+  double_buffer[double_buffer_index++] = 0xf5;
+  double_buffer[double_buffer_index++] = temp_int & 0xff;
+  //double_buffer[double_buffer_index++] = ((temp_int & 0xF8) << 2);
+
   update_load_column_state();
 
   player_input();
@@ -356,13 +366,13 @@ void load_next_column (void) {
   collision_mask[next_metatile_column] = temp_int;
 
   if (next_metatile_column < 16) {
-    temp_int = NTADR_A((next_metatile_column * 2), 0);
+    temp_int = NTADR_A((next_metatile_column * 2), 4);
   } else {
-    temp_int = NTADR_B(((next_metatile_column & 15) * 2), 0);
+    temp_int = NTADR_B(((next_metatile_column & 15) * 2), 4);
   }
 
-  multi_vram_buffer_vert((const char *)first_column_stripe, 30, temp_int);
-  multi_vram_buffer_vert((const char *)second_column_stripe, 30, temp_int + 1);
+  multi_vram_buffer_vert((const char *)first_column_stripe + 4, 26, temp_int);
+  multi_vram_buffer_vert((const char *)second_column_stripe + 4, 26, temp_int + 1);
 
   load_column_state = next_metatile_column;
 
@@ -398,6 +408,10 @@ void entity_star_update() {
         }
       }
     }
+
+    // TODO: refresh score display
+
+
   }
 }
 
