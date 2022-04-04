@@ -18,7 +18,7 @@
 #define FRICTION FP(0, 0, 0x20)
 #define GRAVITY FP(0, 0, 0x40)
 #define JUMP_GRAVITY FP(0, 0, 0x20)
-#define JUMP_IMPULSE (-FP(0, 0x02, 0x80))
+#define JUMP_IMPULSE (-FP(0, 0x03, 0x80))
 
 #define CAM_R_LIMIT FP(0, 0xa0, 0)
 #define CAM_L_LIMIT FP(0, 0x10, 0)
