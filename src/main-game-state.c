@@ -521,7 +521,8 @@ void entity_star_update() {
 void entity_extrastar_update() {
   entity_star_update();
   if (entity_state[i] == Inactive) {
-    // TODO: star collected, play pseudo victory dialogue
+    dialogue_column = 3;
+    dialogue_ptr = (char *) pseudo_victory_dialogue;
   }
 }
 
