@@ -1,6 +1,7 @@
 #include "lib/neslib.h"
 #include "lib/nesdoug.h"
 #include "directions.h"
+#include "entities.h"
 #include "main.h"
 #include "irq_buffer.h"
 #include "temp.h"
@@ -28,6 +29,7 @@
 #define PLAYER_Y1 ((signed char) -14)
 #define PLAYER_Y2 ((signed char) 0)
 
+#define MAX_ENTITIES 16
 
 #pragma bss-name(push, "ZEROPAGE")
 unsigned char * current_level_ptr;
@@ -43,6 +45,8 @@ unsigned char player_grounded;
 
 unsigned int camera_x;
 
+unsigned char next_inactive_entity;
+
 #pragma bss-name(pop)
 
 #pragma bss-name(push, "BSS")
@@ -51,6 +55,13 @@ unsigned char first_column_stripe[30];
 unsigned char second_column_stripe[30];
 unsigned char update_attributes_flag;
 unsigned int collision_mask[32];
+
+unsigned int entity_x[MAX_ENTITIES];
+unsigned int entity_y[MAX_ENTITIES];
+void (*entity_update[MAX_ENTITIES])();
+void (*entity_render[MAX_ENTITIES])();
+entity_state_t entity_state[MAX_ENTITIES];
+unsigned char entity_arg[MAX_ENTITIES];
 
 #pragma bss-name(pop)
 
@@ -107,9 +118,6 @@ void main_start (void) {
   pal_bg(bg_palette);
   pal_spr(sprites_palette);
 
-  ppu_on_all(); //	turn on screen
-  pal_fade_to(0, 4);
-
   camera_x = FP(0, 0, 0);
   player_x = FP(0, 0x30, 0x00);
   player_y = FP(0, 0xcf, 0x00);
@@ -117,6 +125,15 @@ void main_start (void) {
   player_dy = 0;
   player_direction = Right;
   player_grounded = 1;
+
+  for(i = 0; i < MAX_ENTITIES; i++) {
+    entity_state[i] = Inactive;
+  }
+
+  next_inactive_entity = 0;
+
+  ppu_on_all(); //	turn on screen
+  pal_fade_to(0, 4);
 }
 
 void player_input() {
@@ -229,6 +246,14 @@ void update_camera (void) {
   }
 }
 
+void update_entities (void) {
+  for(i = 0; i < MAX_ENTITIES; i++) {
+    if (entity_state[i] != Inactive) {
+      entity_update[i]();
+    }
+  }
+}
+
 void main_upkeep (void) {
   update_attributes();
 
@@ -239,6 +264,8 @@ void main_upkeep (void) {
   update_player_x();
 
   update_camera();
+
+  update_entities();
 }
 
 void main_sprites (void) {
@@ -251,6 +278,12 @@ void main_sprites (void) {
   }
   if (INT(player_x) & 0b100) temp++;
   oam_meta_spr(temp_x, temp_y, metasprite_list[temp]);
+
+  for(i = 0; i < MAX_ENTITIES; i++) {
+    if (entity_state[i] != Inactive) {
+      entity_render[i]();
+    }
+  }
 }
 
 void select_level (void) {
@@ -328,16 +361,16 @@ void update_attributes (void) {
         one_vram_buffer(attributes[temp + 64], 0x27c0 + temp);
       }
     }
-    update_attributes_flag = 0xff;
-  }
-}
+                          update_attributes_flag = 0xff;
+                        }
+                      }
 
-const unsigned int collision_row_mask[] =
-  {
-   0b0100000000000000,
-   0b0010000000000000,
-   0b0001000000000000,
-   0b0000100000000000,
+                      const unsigned int collision_row_mask[] =
+                        {
+                          0b0100000000000000,
+                            0b0010000000000000,
+                            0b0001000000000000,
+0b0000100000000000,
    0b0000010000000000,
    0b0000001000000000,
    0b0000000100000000,

@@ -74,6 +74,7 @@ src/main-game-state.s: src/main-game-state.c \
                        src/lib/neslib.h \
                        src/lib/nesdoug.h \
                        src/directions.h \
+                       src/entities.h \
                        src/main.h \
                        src/irq_buffer.h \
                        src/temp.h \
