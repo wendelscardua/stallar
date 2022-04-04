@@ -1,5 +1,6 @@
 #include "lib/neslib.h"
 #include "lib/nesdoug.h"
+#include "charmap.h"
 #include "directions.h"
 #include "entities.h"
 #include "main.h"
@@ -32,6 +33,7 @@
 #define MAX_ENTITIES 16
 
 #pragma bss-name(push, "ZEROPAGE")
+
 unsigned char * current_level_ptr;
 unsigned char current_level_columns;
 unsigned char next_metatile_column;
@@ -46,6 +48,8 @@ unsigned char player_grounded;
 unsigned int camera_x;
 
 unsigned char next_inactive_entity;
+
+unsigned char score[4];
 
 #pragma bss-name(pop)
 
@@ -103,6 +107,10 @@ void main_start (void) {
   player_dy = 0;
   player_direction = Right;
   player_grounded = 1;
+
+  for(i = 0; i < 4; i++) {
+    score[i] = '0';
+  }
 
   for(i = 0; i < MAX_ENTITIES; i++) {
     entity_state[i] = Inactive;

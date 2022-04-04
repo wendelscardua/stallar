@@ -73,6 +73,7 @@ src/title-game-state.s: src/title-game-state.c
 src/main-game-state.s: src/main-game-state.c \
                        src/lib/neslib.h \
                        src/lib/nesdoug.h \
+                       src/charmap.h \
                        src/directions.h \
                        src/entities.h \
                        src/main.h \
