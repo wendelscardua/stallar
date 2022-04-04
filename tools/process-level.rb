@@ -28,6 +28,25 @@ class TmxReader
 
   def process
     level_label = labelify(tmx_file.gsub('.tmx', '').gsub(/.*\//, ''))
+
+    objects = document.xpath('//objectgroup/object')
+
+    entities = objects.map do |object|
+      {
+        type: object['type'].capitalize,
+        meta_column: numberify(object['x']) / 16,
+        meta_row: numberify(object['y']) / 16
+      }.tap do |entity|
+        case object['type']
+        when 'star'
+          entity[:arg] = 0
+        when 'blob', 'spike'
+          entity[:arg] = (numberify(object['x']) + numberify(object['width'])) / 16 - entity[:meta_column]
+          entity[:meta_column] += entity[:arg]
+        end
+      end
+    end
+
     metatiles = document.xpath('//layer/data')
                         .text
                         .scan(/\d+/)
@@ -40,12 +59,20 @@ class TmxReader
         _#{level_label}:
         .byte #{fmt(columns)} ; num columns
       PREAMBLE
-      metatiles.each_slice(columns).to_a.transpose.each do |column|
+      metatiles.each_slice(columns).to_a.transpose.each.with_index do |column, column_index|
         bytes = column.map { |byte| fmt(byte) }.join(', ')
         f.puts '; column data'
         f.puts ".byte #{bytes}"
+
         f.puts '; entities on column'
-        f.puts '.byte $00'
+        column_entities = entities.select { |entity| entity[:meta_column] == column_index }
+        f.puts ".byte #{fmt(column_entities.count)}"
+        column_entities.each.with_index do |entity, index|
+          f.puts "; entity #{index + 1}"
+          f.puts ".byte entity_type::#{entity[:type]}"
+          f.puts ".byte #{fmt(entity[:meta_row])}, #{fmt(entity[:arg])}"
+        end
+        f.puts '; end of entities on column'
       end
     end
   end
