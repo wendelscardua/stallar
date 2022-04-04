@@ -70,6 +70,7 @@ unsigned int entity_y[MAX_ENTITIES];
 void (*entity_update[MAX_ENTITIES])();
 void (*entity_render[MAX_ENTITIES])();
 entity_state_t entity_state[MAX_ENTITIES];
+unsigned char entity_state_value[MAX_ENTITIES];
 unsigned char entity_arg[MAX_ENTITIES];
 
 #pragma bss-name(pop)
@@ -419,10 +420,35 @@ void entity_star_update() {
   }
 }
 
+#define ENEMY_SPEED FP(0, 0x1, 0x00)
+void entity_movable_update() {
+  if (entity_state_value[i] == 0) {
+    entity_state_value[i] = 16 * entity_arg[i];
+    switch(entity_state[i]) {
+    case MoveLeft: entity_state[i] = MoveRight; break;
+    case MoveRight: entity_state[i] = MoveLeft; break;
+    }
+  } else {
+    entity_state_value[i]--;
+    switch(entity_state[i]) {
+    case MoveLeft:
+      entity_x[i] -= ENEMY_SPEED;
+      break;
+    case MoveRight:
+      entity_x[i] += ENEMY_SPEED;
+      break;
+    }
+  }
+}
+
 void entity_blob_update() {
+  entity_movable_update();
+  // TODO blob stuff
 }
 
 void entity_spike_update() {
+  entity_movable_update();
+  // TODO spike stuff
 }
 
 void entity_star_render() {
@@ -489,6 +515,7 @@ void update_load_column_state (void) {
         entity_x[next_inactive_entity] = temp_x + FP(0, (load_column_state << 4) + 8, 0);
         temp_y = *current_level_ptr++;
         entity_y[next_inactive_entity] = FP(0, ((temp_y) << 4) + 15, 0);
+        entity_state_value[next_inactive_entity] = 0;
         switch(temp) {
         case Star:
           entity_update[next_inactive_entity] = entity_star_update;
@@ -499,13 +526,13 @@ void update_load_column_state (void) {
           entity_update[next_inactive_entity] = entity_blob_update;
           entity_render[next_inactive_entity] = entity_blob_render;
           entity_arg[next_inactive_entity] = *current_level_ptr++;
-          entity_state[next_inactive_entity] = MoveLeft;
+          entity_state[next_inactive_entity] = MoveRight;
           break;
         case Spike:
           entity_update[next_inactive_entity] = entity_spike_update;
           entity_render[next_inactive_entity] = entity_spike_render;
           entity_arg[next_inactive_entity] = *current_level_ptr++;
-          entity_state[next_inactive_entity] = MoveLeft;
+          entity_state[next_inactive_entity] = MoveRight;
           break;
         }
       } else {
