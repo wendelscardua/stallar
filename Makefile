@@ -60,7 +60,7 @@ src/nametable_loader.s: src/nametable_loader.c \
 src/irq_buffer.s: src/irq_buffer.c
 	cc65 -Oirs $< --add-source ${CA65_FLAGS}
 
-src/temp.s: src/temp.c
+src/temp.s: src/temp.c src/temp.h
 	cc65 -Oirs $< --add-source ${CA65_FLAGS}
 
 src/wram.s: src/wram.c \
@@ -70,7 +70,20 @@ src/wram.s: src/wram.c \
 src/title-game-state.s: src/title-game-state.c
 	cc65 -Oirs $< --add-source ${CA65_FLAGS}
 
-src/main-game-state.s: src/main-game-state.c
+src/main-game-state.s: src/main-game-state.c \
+                       src/lib/neslib.h \
+                       src/lib/nesdoug.h \
+                       src/directions.h \
+                       src/main.h \
+                       src/irq_buffer.h \
+                       src/temp.h \
+                       src/mmc3/mmc3_code.h \
+                       assets/metasprites.h \
+                       assets/metatiles.h \
+                       assets/nametables.h \
+                       assets/palettes.h \
+                       assets/levels.h \
+                       src/music/soundtrack.h
 	cc65 -Oirs $< --add-source ${CA65_FLAGS}
 
 src/game-over-game-state.s: src/game-over-game-state.c

@@ -40,6 +40,7 @@ unsigned char attributes[128];
 unsigned char first_column_stripe[30];
 unsigned char second_column_stripe[30];
 unsigned char update_attributes_flag;
+unsigned int collision_mask[32];
 
 #pragma bss-name(pop)
 
@@ -193,8 +194,19 @@ void load_next_column (void) {
     temp_int = NTADR_B(((next_metatile_column & 15) * 2), 0);
   }
 
+  k = 0;
+
   for(j = 0; j < 30; j += 2) {
     temp_char = *current_level_ptr++;
+
+    // update collision info
+    k <<= 1;
+    if (temp_char == 1 || temp_char == 3) {
+      // TODO: pull from metatile metadata
+      k |= 1;
+    }
+
+    // prepare buffers for vram updates
     temp = 5 * temp_char;
     first_column_stripe[j] = metatiles[temp];
     first_column_stripe[j+1] = metatiles[temp+2];
@@ -222,6 +234,8 @@ void load_next_column (void) {
     }
     attributes[temp] = (attributes[temp] & (~temp_char)) | temp_attr;
   }
+
+  collision_mask[next_metatile_column] = k;
 
   multi_vram_buffer_vert((const char *)first_column_stripe, 30, temp_int);
   multi_vram_buffer_vert((const char *)second_column_stripe, 30, temp_int + 1);
