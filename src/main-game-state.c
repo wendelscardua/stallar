@@ -255,6 +255,12 @@ void update_camera (void) {
 void update_entities (void) {
   for(i = 0; i < MAX_ENTITIES; i++) {
     if (entity_state[i] != Inactive) {
+      temp_int_x = entity_x[i] - camera_x;
+      if (temp_int_x >= FP(1, 0xd0, 0x00)) {
+        entity_state[i] = Inactive;
+        continue;
+      }
+
       entity_update[i]();
     }
   }
