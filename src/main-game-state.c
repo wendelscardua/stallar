@@ -96,6 +96,18 @@ void main_start (void) {
 
   next_inactive_entity = 0;
 
+  camera_x = FP(0, 0, 0);
+  player_x = FP(0, 0x30, 0x00);
+  player_y = FP(0, 0xcf, 0x00);
+  player_dx = 0;
+  player_dy = 0;
+  player_direction = Right;
+  player_grounded = 1;
+
+  for(i = 0; i < MAX_ENTITIES; i++) {
+    entity_state[i] = Inactive;
+  }
+
   next_metatile_column = 0;
   current_level_ptr = (unsigned char *) levels[0];
   select_level();
@@ -125,18 +137,6 @@ void main_start (void) {
 
   pal_bg(bg_palette);
   pal_spr(sprites_palette);
-
-  camera_x = FP(0, 0, 0);
-  player_x = FP(0, 0x30, 0x00);
-  player_y = FP(0, 0xcf, 0x00);
-  player_dx = 0;
-  player_dy = 0;
-  player_direction = Right;
-  player_grounded = 1;
-
-  for(i = 0; i < MAX_ENTITIES; i++) {
-    entity_state[i] = Inactive;
-  }
 
   ppu_on_all(); //	turn on screen
   pal_fade_to(0, 4);
@@ -394,6 +394,7 @@ void update_load_column_state (void) {
   } else if (load_column_state < 0xff) {
     load_column_state ^= 0x80;
     j = *current_level_ptr++;
+    temp_x = FP(0, INT(camera_x), 0);
     while(j > 0) {
       for(k = 0; k < MAX_ENTITIES; k++) {
         if (entity_state[next_inactive_entity] == Inactive) break;
@@ -402,7 +403,7 @@ void update_load_column_state (void) {
       }
       if (entity_state[next_inactive_entity] == Inactive) {
         temp = *current_level_ptr++;
-        entity_x[next_inactive_entity] = FP(0, (load_column_state << 4) + 8, 0);
+        entity_x[next_inactive_entity] = temp_x + FP(0, (load_column_state << 4) + 8, 0);
         temp_y = *current_level_ptr++;
         entity_y[next_inactive_entity] = FP(0, ((temp_y) << 4) + 15, 0);
         switch(temp) {
