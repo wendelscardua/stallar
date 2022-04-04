@@ -452,6 +452,13 @@ void entity_star_update() {
   }
 }
 
+void entity_extrastar_update() {
+  entity_star_update();
+  if (entity_state[i] == Inactive) {
+    // TODO: star collected, play pseudo victory dialogue
+  }
+}
+
 #define ENEMY_SPEED FP(0, 0x1, 0x00)
 void entity_movable_update() {
   if (entity_state_value[i] == 0) {
@@ -508,6 +515,10 @@ void entity_spike_update() {
   }
 }
 
+void entity_mapgoal_update() {
+  // TODO collide with goal
+}
+
 void entity_star_render() {
   temp_int_x = entity_x[i] - camera_x;
   if (temp_int_x >= FP(1, 0x00, 0x00)) return;
@@ -546,6 +557,10 @@ void entity_spike_render() {
   oam_meta_spr(temp_x, temp_y, metasprite_list[temp_char]);
 }
 
+void entity_mapgoal_render() {
+  return;
+}
+
 void update_load_column_state (void) {
   if (load_column_state < 32) {
     for(j = 0; j < 8; j++) {
@@ -579,6 +594,11 @@ void update_load_column_state (void) {
           entity_render[next_inactive_entity] = entity_star_render;
           entity_state[next_inactive_entity] = Fixed;
           break;
+        case Extrastar:
+          entity_update[next_inactive_entity] = entity_extrastar_update;
+          entity_render[next_inactive_entity] = entity_star_render;
+          entity_state[next_inactive_entity] = Fixed;
+          break;
         case Blob:
           entity_update[next_inactive_entity] = entity_blob_update;
           entity_render[next_inactive_entity] = entity_blob_render;
@@ -591,6 +611,11 @@ void update_load_column_state (void) {
           entity_arg[next_inactive_entity] = *current_level_ptr++;
           entity_state[next_inactive_entity] = MoveRight;
           break;
+        case Mapgoal:
+          entity_update[next_inactive_entity] = entity_mapgoal_update;
+          entity_render[next_inactive_entity] = entity_mapgoal_render;
+          entity_state[next_inactive_entity] = Fixed;
+          break;
         }
       } else {
         // entity overflow, just drop (shouldn't happen usually)
@@ -598,6 +623,8 @@ void update_load_column_state (void) {
         *current_level_ptr++; // drop row
         switch(temp) {
         case Star:
+        case Extrastar:
+        case Mapgoal:
           break;
         case Blob:
         case Spike:
@@ -623,8 +650,8 @@ const unsigned int collision_row_mask[] =
    0b0000000010000000,
    0b0000000001000000,
    0b0000000000100000,
-   0b0000000000010000,
-   0b0000000000001000,
+     0b0000000000010000,
+     0b0000000000001000,
    0b0000000000000100,
    0b0000000000000010,
    0b0000000000000001

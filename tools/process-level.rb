@@ -38,7 +38,7 @@ class TmxReader
         meta_row: numberify(object['y']) / 16
       }.tap do |entity|
         case object['type']
-        when 'star'
+        when 'star', 'extrastar', 'mapgoal'
           entity[:arg] = nil
         when 'blob', 'spike'
           entity[:arg] = ((numberify(object['x']) + numberify(object['width'])) - 16 * entity[:meta_column]) / 16

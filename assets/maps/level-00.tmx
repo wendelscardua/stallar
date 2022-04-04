@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="60" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="15">
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="60" height="15" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="16">
  <tileset firstgid="1" source="metatiles.tsx"/>
  <layer id="1" name="Tile Layer 1" width="60" height="15">
   <data encoding="csv">
@@ -51,10 +51,13 @@
   <object id="10" type="star" x="679.5" y="136">
    <point/>
   </object>
-  <object id="11" type="star" x="839.5" y="183.5">
+  <object id="11" type="extrastar" x="839.5" y="183.5">
    <point/>
   </object>
   <object id="13" type="blob" x="295.091" y="197.455" width="33.8182" height="3.09091"/>
   <object id="14" type="blob" x="600.545" y="194.364" width="80.1818" height="6.18182"/>
+  <object id="15" type="mapgoal" x="806.667" y="196.667">
+   <point/>
+  </object>
  </objectgroup>
 </map>

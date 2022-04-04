@@ -7,6 +7,8 @@ typedef enum
    Star,
    Blob,
    Spike,
+   Mapgoal,
+   Extrastar
   } entity_t;
 
 typedef enum
