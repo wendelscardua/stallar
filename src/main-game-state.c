@@ -286,18 +286,24 @@ void update_entities (void) {
 
 void update_death (void) {
   if (player_direction == Up) {
-    player_y -= FP(0, 0x2, 0x00);
+    player_y -= FP(0, 0x4, 0x00);
     death_counter--;
     if (death_counter == 0 || player_y <= FP(0, 0x20, 0x00)) {
-      death_counter = 0x80;
+      death_counter = 0x40;
       player_direction = Down;
     }
   }
   if (player_direction == Down) {
-    player_y += FP(0, 0x3, 0x00);
-    death_counter--;
     if (death_counter == 0 || player_y > FP(0, 0xf0, 0x00)) {
-      game_over_start();
+      player_y = FP(0, 0xff, 0x00);
+      if ((TRUNC(camera_x)) == 0) {
+        game_over_start();
+      } else {
+        camera_x -= FP(0, 0x00, 0x80);
+      }
+    } else {
+      if (player_y < FP(0, 0xf0, 0x00)) player_y += FP(0, 0x4, 0x00);
+      if (death_counter > 0) death_counter--;
     }
   }
 }
