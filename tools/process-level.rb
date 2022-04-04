@@ -39,9 +39,9 @@ class TmxReader
       }.tap do |entity|
         case object['type']
         when 'star'
-          entity[:arg] = 0
+          entity[:arg] = nil
         when 'blob', 'spike'
-          entity[:arg] = (numberify(object['x']) + numberify(object['width'])) / 16 - entity[:meta_column]
+          entity[:arg] = 16 * ((numberify(object['x']) + numberify(object['width'])) / 16 - entity[:meta_column])
           entity[:meta_column] += entity[:arg]
         end
       end
@@ -70,7 +70,8 @@ class TmxReader
         column_entities.each.with_index do |entity, index|
           f.puts "; entity #{index + 1}"
           f.puts ".byte entity_type::#{entity[:type]}"
-          f.puts ".byte #{fmt(entity[:meta_row])}, #{fmt(entity[:arg])}"
+          f.puts ".byte #{fmt(entity[:meta_row])}"
+          f.puts ".byte #{fmt(entity[:arg])}" if entity[:arg]
         end
         f.puts '; end of entities on column'
       end

@@ -98,7 +98,7 @@ void main_start (void) {
   current_level_ptr = (unsigned char *) levels[0];
   select_level();
 
-  for(i = 0; i < 32; i++) { // TODO: at least 16 columns
+  for(i = 0; i < 18; i++) {
     clear_vram_buffer();
     load_next_column();
     flush_vram_update_nmi();
@@ -357,6 +357,24 @@ void load_next_column (void) {
   if (next_metatile_column == 32) next_metatile_column = 0;
 }
 
+void entity_star_update() {
+}
+
+void entity_blob_update() {
+}
+
+void entity_spike_update() {
+}
+
+void entity_star_render() {
+}
+
+void entity_blob_render() {
+}
+
+void entity_spike_render() {
+}
+
 void update_load_column_state (void) {
   if (load_column_state < 32) {
     for(j = 0; j < 8; j++) {
@@ -372,7 +390,47 @@ void update_load_column_state (void) {
     load_column_state ^= 0x80;
     j = *current_level_ptr++;
     while(j > 0) {
-      // TODO: read entity data
+      for(k = 0; k < MAX_ENTITIES; k++) {
+        if (entity_state[next_inactive_entity] == Inactive) break;
+        next_inactive_entity++;
+        if (next_inactive_entity >= MAX_ENTITIES) next_inactive_entity = 0;
+      }
+      if (entity_state[next_inactive_entity] == Inactive) {
+        temp = *current_level_ptr++;
+        entity_x[next_inactive_entity] = FP(0, (load_column_state << 4) + 8, 0);
+        temp_y = *current_level_ptr++;
+        entity_y[next_inactive_entity] = FP(0, ((temp_y) << 4) + 15, 0);
+        switch(temp) {
+        case Star:
+          entity_update[next_inactive_entity] = entity_star_update;
+          entity_render[next_inactive_entity] = entity_star_render;
+          break;
+        case Blob:
+          entity_update[next_inactive_entity] = entity_blob_update;
+          entity_render[next_inactive_entity] = entity_blob_render;
+          entity_arg[next_inactive_entity] = *current_level_ptr++;
+          entity_state[next_inactive_entity] = MoveLeft;
+          break;
+        case Spike:
+          entity_update[next_inactive_entity] = entity_spike_update;
+          entity_render[next_inactive_entity] = entity_spike_render;
+          entity_arg[next_inactive_entity] = *current_level_ptr++;
+          entity_state[next_inactive_entity] = MoveLeft;
+          break;
+        }
+      } else {
+        // entity overflow, just drop (shouldn't happen usually)
+        temp = *current_level_ptr++;
+        *current_level_ptr++; // drop row
+        switch(temp) {
+        case Star:
+          break;
+        case Blob:
+        case Spike:
+          *current_level_ptr++; // drop arg
+          break;
+        }
+      }
       j--;
     }
     load_column_state = 0xff;
