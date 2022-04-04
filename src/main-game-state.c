@@ -153,6 +153,10 @@ void main_upkeep (void) {
       player_dy = 0;
       temp_int_y = player_y;
       player_grounded  = 1;
+    } else {
+      if (player_grounded && player_dy >= FP(0, 1, 0)) {
+        player_grounded = 0;
+      }
     }
   } else if (player_dy < 0) {
     player_grounded = 0;
