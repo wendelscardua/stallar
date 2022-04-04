@@ -13,12 +13,18 @@
 #include "music/soundtrack.h"
 
 #define INITIAL_H_SPEED FP(0, 1, 0)
-#define MAX_H_SPEED FP(0, 2, 0)
+#define MAX_H_SPEED FP(0, 4, 0)
 #define H_ACCEL FP(0, 0, 0x08)
 #define FRICTION FP(0, 0, 0x20)
 
 #define CAM_R_LIMIT FP(0, 0xa0, 0)
 #define CAM_L_LIMIT FP(0, 0x10, 0)
+
+#define PLAYER_X1 ((signed char) -3)
+#define PLAYER_X2 ((signed char) 3)
+#define PLAYER_Y1 ((signed char) -14)
+#define PLAYER_Y2 ((signed char) 0)
+
 
 #pragma bss-name(push, "ZEROPAGE")
 unsigned char * current_level_ptr;
@@ -50,6 +56,7 @@ unsigned int collision_mask[32];
 void select_level (void);
 void load_next_column (void);
 void update_attributes (void);
+unsigned char __fastcall__ player_bg_collide (signed char dx, signed char dy);
 
 void main_start (void) {
   current_game_state = Main;
@@ -125,49 +132,63 @@ void main_upkeep (void) {
     else { player_dx = -MAX_H_SPEED; }
   }
 
-  // update player
-  player_x += player_dx;
-  player_y += player_dy;
+  // update player x
+  temp_int_x = player_x + player_dx;
+  if (player_dx > 0) {
+    if (player_bg_collide(PLAYER_X2, PLAYER_Y1) || player_bg_collide(PLAYER_X2, PLAYER_Y2)) {
+      player_dx = 0;
+      temp_int_x = player_x;
+    }
+  } else if (player_dx < 0) {
+    if (player_bg_collide(PLAYER_X1, PLAYER_Y1) || player_bg_collide(PLAYER_X1, PLAYER_Y2)) {
+      player_dx = 0;
+      temp_int_x = player_x;
+    }
+  }
+  player_x = temp_int_x;
 
   if (!(pad1 & (PAD_LEFT | PAD_RIGHT))) {
     if (player_dx > 0) {
-      player_dx -= FRICTION;
-      if (player_dx < 0) player_dx = 0;
-    }
-    if (player_dx < 0) {
-      player_dx += FRICTION;
-      if (player_dx > 0) player_dx = 0;
-    }
-  }
-
-  // update camera
-  if (player_x - camera_x > CAM_R_LIMIT) {
-    camera_x = player_x - CAM_R_LIMIT;
-  }
-
-  if (player_x - camera_x < CAM_L_LIMIT) {
-    player_x = camera_x + CAM_L_LIMIT;
-  }
-
-  // check for column loading
-  temp_int_x = INT(camera_x);
-  set_scroll_x(temp_int_x);
-  temp_x = ((temp_int_x + 0x100) & 0x1ff) >> 4;
-
-  if (next_metatile_column == temp_x) {
-    if (current_level_columns == 0) {
-      temp = 1;
-      while(temp < num_levels) temp <<= 1;
-      temp--;
-      i = 0;
-      while(i == 0 || i >= num_levels) {
-        i = rand8() & temp;
+        player_dx -= FRICTION;
+        if (player_dx < 0) player_dx = 0;
       }
-      current_level_ptr = (unsigned char *) levels[i];
-      select_level();
+      if (player_dx < 0) {
+        player_dx += FRICTION;
+        if (player_dx > 0) player_dx = 0;
+      }
     }
-    load_next_column();
-  }
+
+    // update player y
+    player_y += player_dy;
+
+    // update camera
+    if (player_x - camera_x > CAM_R_LIMIT) {
+      camera_x = player_x - CAM_R_LIMIT;
+    }
+
+    if (player_x - camera_x < CAM_L_LIMIT) {
+      player_x = camera_x + CAM_L_LIMIT;
+    }
+
+    // check for column loading
+    temp_int_x = INT(camera_x);
+    set_scroll_x(temp_int_x);
+    temp_x = ((temp_int_x + 0x100) & 0x1ff) >> 4;
+
+    if (next_metatile_column == temp_x) {
+      if (current_level_columns == 0) {
+        temp = 1;
+        while(temp < num_levels) temp <<= 1;
+        temp--;
+        i = 0;
+        while(i == 0 || i >= num_levels) {
+          i = rand8() & temp;
+        }
+        current_level_ptr = (unsigned char *) levels[i];
+        select_level();
+      }
+      load_next_column();
+    }
 }
 
 void main_sprites (void) {
@@ -259,4 +280,30 @@ void update_attributes (void) {
     }
     update_attributes_flag = 0xff;
   }
+}
+
+const unsigned int collision_row_mask[] =
+  {
+   0b0100000000000000,
+   0b0010000000000000,
+   0b0001000000000000,
+   0b0000100000000000,
+   0b0000010000000000,
+   0b0000001000000000,
+   0b0000000100000000,
+   0b0000000010000000,
+   0b0000000001000000,
+   0b0000000000100000,
+   0b0000000000010000,
+   0b0000000000001000,
+   0b0000000000000100,
+   0b0000000000000010,
+   0b0000000000000001
+  };
+
+unsigned char __fastcall__ player_bg_collide(signed char dx, signed char dy) {
+  temp_x = ((((unsigned int) INT(temp_int_x)) & 0x1ff) + dx) >> 4;
+  temp_y = (INT(player_y) + dy) >> 4;
+
+  return collision_mask[temp_x] & collision_row_mask[temp_y];
 }
