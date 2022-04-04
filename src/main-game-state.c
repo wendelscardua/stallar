@@ -471,7 +471,20 @@ void entity_movable_update() {
 
 void entity_blob_update() {
   entity_movable_update();
-  // TODO blob stuff
+
+  temp_x = TRUNC(entity_x[i]);
+  temp_y = TRUNC(entity_y[i]);
+
+  if (player_dy > 0) {
+    // upper blob collision
+    if ((unsigned char) (TRUNC(player_x + FP(0, 3, 0))) >= (unsigned char) (temp_x - TRUNC(FP(0,8,0))) &&
+        (unsigned char) (TRUNC(player_x - FP(0, 3, 0)))  <= (unsigned char) (temp_x + TRUNC(FP(0,8,0))) &&
+        (unsigned char) (TRUNC(player_y + FP(0, 0, 0)))  >= (unsigned char) (temp_y - TRUNC(FP(0,8,0))) &&
+        (unsigned char) (TRUNC(player_y - FP(0, 13, 0))) <= (unsigned char) (temp_y - TRUNC(FP(0,3,0)))) {
+      entity_state[i] = Inactive; // TODO: maybe dying?
+      player_dy = JUMP_IMPULSE;
+    }
+  }
 }
 
 void entity_spike_update() {
