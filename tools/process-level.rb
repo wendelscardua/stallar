@@ -41,7 +41,7 @@ class TmxReader
         when 'star'
           entity[:arg] = nil
         when 'blob', 'spike'
-          entity[:arg] = 16 * ((numberify(object['x']) + numberify(object['width'])) / 16 - entity[:meta_column])
+          entity[:arg] = ((numberify(object['x']) + numberify(object['width'])) - 16 * entity[:meta_column]) / 16
           entity[:meta_column] += entity[:arg]
         end
       end
@@ -61,7 +61,7 @@ class TmxReader
       PREAMBLE
       metatiles.each_slice(columns).to_a.transpose.each.with_index do |column, column_index|
         bytes = column.map { |byte| fmt(byte) }.join(', ')
-        f.puts '; column data'
+        f.puts "; column #{column_index} data"
         f.puts ".byte #{bytes}"
 
         f.puts '; entities on column'
