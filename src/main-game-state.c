@@ -410,8 +410,12 @@ void entity_star_update() {
     }
 
     // TODO: refresh score display
-
-
+    for(j = 0; j < 3; j++) {
+      if (score[j] != '0') {
+        break;
+      }
+    }
+    multi_vram_buffer_horz((const char *) score + j, 4 - j, NTADR_A(18 + j, 3));
   }
 }
 
