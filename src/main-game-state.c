@@ -302,12 +302,12 @@ void main_sprites (void) {
   temp_x = INT(player_x - camera_x);
   temp_y = INT(player_y);
   if (player_direction == Left) {
-    temp = 2;
+    temp_char = MSPlayer + 2;
   } else {
-    temp = 0;
+    temp_char = MSPlayer;
   }
-  if (INT(player_x) & 0b100) temp++;
-  oam_meta_spr(temp_x, temp_y, metasprite_list[temp]);
+  if (INT(player_x) & 0b100) temp_char++;
+  oam_meta_spr(temp_x, temp_y, metasprite_list[temp_char]);
 
   for(i = 0; i < MAX_ENTITIES; i++) {
     if (entity_state[i] != Inactive) {
@@ -434,9 +434,33 @@ void entity_star_render() {
 }
 
 void entity_blob_render() {
+  temp_int_x = entity_x[i] - camera_x;
+  if (temp_int_x >= FP(1, 0x00, 0x00)) return;
+  temp_x = INT(temp_int_x);
+  temp_y = INT(entity_y[i]);
+  if (entity_state[i] == MoveLeft) {
+    temp_char = MSBlob + 2;
+  } else {
+    temp_char = MSBlob;
+  }
+  if (temp_x & 0b100) temp_char++; // TODO relative to camera
+
+  oam_meta_spr(temp_x, temp_y, metasprite_list[temp_char]);
 }
 
 void entity_spike_render() {
+  temp_int_x = entity_x[i] - camera_x;
+  if (temp_int_x >= FP(1, 0x00, 0x00)) return;
+  temp_x = INT(temp_int_x);
+  temp_y = INT(entity_y[i]);
+  if (entity_state[i] == MoveLeft) {
+    temp_char = MSSpike + 2;
+  } else {
+    temp_char = MSSpike;
+  }
+  if (temp_x & 0b100) temp_char++; // TODO relative to camera
+
+  oam_meta_spr(temp_x, temp_y, metasprite_list[temp_char]);
 }
 
 void update_load_column_state (void) {
