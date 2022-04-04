@@ -85,8 +85,18 @@ unsigned char death_counter;
 #pragma rodata-name ("RODATA")
 #pragma code-name ("CODE")
 
-const char victory_dialogue[] = "You won!\nCongrats!#";
-const char pseudo_victory_dialogue[] = "You won!\nCongrat...\nWait...the goal!\nYou skipped it!\nYou can't do that!@";
+// ff = simple end
+// fe = victory lapify
+// fd = next sentence
+const char victory_dialogue[] =
+  "You won!\xfd"
+  "Congrats!\xfe";
+const char pseudo_victory_dialogue[] =
+  "You won!\xfd"
+  "Congrat...\xfd"
+  "Wait...the goal!\xfd"
+  "You skipped it!\xfd"
+  "You can't do that!\xff";
 const char erase_dialogue[] = "                 ";
 
 void select_level (void);
@@ -332,23 +342,24 @@ void update_victory_lap (void) {
 
 void dialogue_update(void) {
   temp_char = *dialogue_ptr;
-  if (temp_char == '@') {
+
+  if (temp_char == '\xff') {
     if (pad1_new & (PAD_A | PAD_B | PAD_START)) {
       multi_vram_buffer_horz(erase_dialogue, 18, NTADR_A(3, 2));
       dialogue_ptr = 0;
     }
-  } else if (temp_char == '#') {
+  } else if (temp_char == '\xfe') {
     if (pad1_new & (PAD_A | PAD_B | PAD_START)) {
       multi_vram_buffer_horz(erase_dialogue, 18, NTADR_A(3, 2));
       dialogue_ptr = 0;
       start_victory();
-    }
-  } else if (temp_char == '\n') {
+    } else return;
+  } else if (temp_char == '\xfd') {
     if (pad1_new & (PAD_A | PAD_B | PAD_START)) {
       multi_vram_buffer_horz(erase_dialogue, 18, NTADR_A(3, 2));
       dialogue_ptr++;
       dialogue_column = 3;
-    }
+    } else return;
   } else {
     if ((get_frame_count() & 0b1111) == 0 || (pad1 & (PAD_A | PAD_B))) {
       one_vram_buffer(temp_char, NTADR_A(dialogue_column, 2));
