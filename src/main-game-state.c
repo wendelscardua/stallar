@@ -203,6 +203,10 @@ void update_player_y() {
     }
   }
   player_y = temp_int_y;
+
+  if (player_y >= FP(0, 0xf0, 0x00)) {
+    start_dying();
+  }
 }
 
 void update_player_x (void) {
