@@ -11,10 +11,10 @@ map_file, s_file = ARGV
 bytes = File.open(map_file, 'rb', &:read).unpack('C*')
 
 File.open(s_file, 'w') do |f|
-  f.puts <<-PREAMBLE
-.segment "RODATA"
-.export _metatiles
-_metatiles:
+  f.puts <<~PREAMBLE
+    .segment "RODATA"
+    .export _metatiles
+    _metatiles:
   PREAMBLE
   (0..50).each do |metatile_index|
     meta_row = metatile_index / 8

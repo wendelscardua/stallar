@@ -35,13 +35,13 @@ class TmxReader
     columns = metatiles.count / 15
     File.open(s_file, 'w') do |f|
       f.puts <<~"PREAMBLE"
-             .segment "RODATA"
-             .export _#{level_label}
-             _#{level_label}:
-             .byte #{fmt(columns)} ; num columns
+        .segment "RODATA"
+        .export _#{level_label}
+        _#{level_label}:
+        .byte #{fmt(columns)} ; num columns
       PREAMBLE
       metatiles.each_slice(columns).to_a.transpose.each do |column|
-        bytes = column.map { |byte| fmt(byte)}.join(', ')
+        bytes = column.map { |byte| fmt(byte) }.join(', ')
         f.puts ".byte #{bytes}"
       end
     end
