@@ -94,6 +94,8 @@ void main_start (void) {
   vram_adr(NTADR_A(0,0));
   vram_unrle(empty_nametable);
 
+  next_inactive_entity = 0;
+
   next_metatile_column = 0;
   current_level_ptr = (unsigned char *) levels[0];
   select_level();
@@ -135,8 +137,6 @@ void main_start (void) {
   for(i = 0; i < MAX_ENTITIES; i++) {
     entity_state[i] = Inactive;
   }
-
-  next_inactive_entity = 0;
 
   ppu_on_all(); //	turn on screen
   pal_fade_to(0, 4);
@@ -367,6 +367,11 @@ void entity_spike_update() {
 }
 
 void entity_star_render() {
+  temp_int_x = entity_x[i] - camera_x;
+  if (temp_int_x >= FP(1, 0x00, 0x00)) return;
+  temp_x = INT(temp_int_x);
+  temp_y = INT(entity_y[i]);
+  oam_meta_spr(temp_x, temp_y, metasprite_list[4]);
 }
 
 void entity_blob_render() {
@@ -404,6 +409,7 @@ void update_load_column_state (void) {
         case Star:
           entity_update[next_inactive_entity] = entity_star_update;
           entity_render[next_inactive_entity] = entity_star_render;
+          entity_state[next_inactive_entity] = Fixed;
           break;
         case Blob:
           entity_update[next_inactive_entity] = entity_blob_update;
