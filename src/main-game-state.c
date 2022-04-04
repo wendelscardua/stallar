@@ -53,7 +53,12 @@ unsigned char next_inactive_entity;
 unsigned char attributes[128];
 unsigned char first_column_stripe[30];
 unsigned char second_column_stripe[30];
-unsigned char update_attributes_flag;
+
+unsigned char load_column_state;
+// 0xff = nothing
+// 0x80 | column = load entities on column
+// column = load attributes for column
+
 unsigned int collision_mask[32];
 
 unsigned int entity_x[MAX_ENTITIES];
@@ -70,7 +75,7 @@ unsigned char entity_arg[MAX_ENTITIES];
 
 void select_level (void);
 void load_next_column (void);
-void update_attributes (void);
+void update_load_column_state (void);
 unsigned char __fastcall__ player_bg_collide (signed char dx, signed char dy);
 
 void main_start (void) {
@@ -98,7 +103,8 @@ void main_start (void) {
     load_next_column();
     flush_vram_update_nmi();
     clear_vram_buffer();
-    update_attributes();
+    update_load_column_state();
+    update_load_column_state();
     flush_vram_update_nmi();
   }
   vram_adr(NTADR_A(0,0));
@@ -255,7 +261,7 @@ void update_entities (void) {
 }
 
 void main_upkeep (void) {
-  update_attributes();
+  update_load_column_state();
 
   player_input();
 
@@ -344,33 +350,41 @@ void load_next_column (void) {
   multi_vram_buffer_vert((const char *)first_column_stripe, 30, temp_int);
   multi_vram_buffer_vert((const char *)second_column_stripe, 30, temp_int + 1);
 
-  update_attributes_flag = next_metatile_column;
+  load_column_state = next_metatile_column;
 
   --current_level_columns;
   next_metatile_column++;
   if (next_metatile_column == 32) next_metatile_column = 0;
 }
 
-void update_attributes (void) {
-  if (update_attributes_flag != 0xff) {
+void update_load_column_state (void) {
+  if (load_column_state < 32) {
     for(j = 0; j < 8; j++) {
-      temp = j * 8 + ((update_attributes_flag & 15) >> 1);
-      if (update_attributes_flag < 16) {
+      temp = j * 8 + ((load_column_state & 15) >> 1);
+      if (load_column_state < 16) {
         one_vram_buffer(attributes[temp], 0x23c0 + temp);
       } else {
         one_vram_buffer(attributes[temp + 64], 0x27c0 + temp);
       }
     }
-                          update_attributes_flag = 0xff;
-                        }
-                      }
+    load_column_state ^= 0x80;
+  } else if (load_column_state < 0xff) {
+    load_column_state ^= 0x80;
+    j = *current_level_ptr++;
+    while(j > 0) {
+      // TODO: read entity data
+      j--;
+    }
+    load_column_state = 0xff;
+  }
+}
 
-                      const unsigned int collision_row_mask[] =
-                        {
-                          0b0100000000000000,
-                            0b0010000000000000,
-                            0b0001000000000000,
-0b0000100000000000,
+const unsigned int collision_row_mask[] =
+  {
+   0b0100000000000000,
+   0b0010000000000000,
+   0b0001000000000000,
+   0b0000100000000000,
    0b0000010000000000,
    0b0000001000000000,
    0b0000000100000000,

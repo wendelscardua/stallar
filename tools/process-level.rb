@@ -42,7 +42,10 @@ class TmxReader
       PREAMBLE
       metatiles.each_slice(columns).to_a.transpose.each do |column|
         bytes = column.map { |byte| fmt(byte) }.join(', ')
+        f.puts '; column data'
         f.puts ".byte #{bytes}"
+        f.puts '; entities on column'
+        f.puts '.byte $00'
       end
     end
   end
