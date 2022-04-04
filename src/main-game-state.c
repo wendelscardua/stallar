@@ -73,6 +73,8 @@ entity_state_t entity_state[MAX_ENTITIES];
 unsigned char entity_state_value[MAX_ENTITIES];
 unsigned char entity_arg[MAX_ENTITIES];
 
+unsigned char death_counter;
+
 #pragma bss-name(pop)
 
 #pragma rodata-name ("RODATA")
@@ -81,6 +83,8 @@ unsigned char entity_arg[MAX_ENTITIES];
 void select_level (void);
 void load_next_column (void);
 void update_load_column_state (void);
+void start_dying (void);
+
 unsigned char __fastcall__ player_bg_collide (signed char dx, signed char dy);
 
 void main_start (void) {
@@ -276,6 +280,24 @@ void update_entities (void) {
   }
 }
 
+void update_death (void) {
+  if (player_direction == Up) {
+    player_y -= FP(0, 0x2, 0x00);
+    death_counter--;
+    if (death_counter == 0 || player_y <= FP(0, 0x20, 0x00)) {
+      death_counter = 0x80;
+      player_direction = Down;
+    }
+  }
+  if (player_direction == Down) {
+    player_y += FP(0, 0x3, 0x00);
+    death_counter--;
+    if (death_counter == 0 || player_y > FP(0, 0xf0, 0x00)) {
+      game_over_start();
+    }
+  }
+}
+
 void main_upkeep (void) {
   // irq scroll
   double_buffer[double_buffer_index++] = 0x1f - 1;
@@ -288,11 +310,13 @@ void main_upkeep (void) {
 
   update_load_column_state();
 
-  player_input();
-
-  update_player_y();
-
-  update_player_x();
+  if (player_direction == Left || player_direction == Right) {
+    player_input();
+    update_player_y();
+    update_player_x();
+  } else {
+    update_death();
+  }
 
   update_camera();
 
@@ -578,4 +602,9 @@ unsigned char __fastcall__ player_bg_collide(signed char dx, signed char dy) {
   temp_y = (INT(temp_int_y) + dy) >> 4;
 
   return (collision_mask[temp_x] & collision_row_mask[temp_y]) != 0;
+}
+
+void start_dying (void) {
+  player_direction = Up;
+  death_counter = 0x20;
 }
