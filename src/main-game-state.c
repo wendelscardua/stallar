@@ -380,6 +380,24 @@ void entity_star_update() {
       (unsigned char) (TRUNC(player_y + FP(0, 0, 0)))  >= (unsigned char) (temp_y - TRUNC(FP(0,10,0))) &&
       (unsigned char) (TRUNC(player_y - FP(0, 13, 0))) <= (unsigned char) (temp_y + TRUNC(FP(0,3,0)))) {
     entity_state[i] = Inactive;
+
+    // increase score
+    score[3]++;
+    if (score[3] > '9') {
+      score[3] = '0';
+      score[2]++;
+      if (score[2] > '9') {
+        score[2] = '0';
+        score[1]++;
+        if (score[1] > '9') {
+          score[1] = '0';
+          score[0]++;
+          if (score[0] > '9') {
+            score[0] = 'X';
+          }
+        }
+      }
+    }
   }
 }
 
