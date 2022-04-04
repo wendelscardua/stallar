@@ -51,6 +51,11 @@ unsigned char next_inactive_entity;
 
 unsigned char score[4];
 
+char * dialogue_ptr;
+unsigned char dialogue_column;
+
+unsigned char victory_lap;
+
 #pragma bss-name(pop)
 
 #pragma bss-name(push, "BSS")
@@ -80,10 +85,15 @@ unsigned char death_counter;
 #pragma rodata-name ("RODATA")
 #pragma code-name ("CODE")
 
+const char victory_dialogue[] = "You won!\nCongrats!#";
+const char pseudo_victory_dialogue[] = "You won!\nCongrat...\nWait...the goal!\nYou skipped it!\nYou can't do that!@";
+const char erase_dialogue[] = "                 ";
+
 void select_level (void);
 void load_next_column (void);
 void update_load_column_state (void);
 void start_dying (void);
+void start_victory (void);
 
 unsigned char __fastcall__ player_bg_collide (signed char dx, signed char dy);
 
@@ -112,6 +122,8 @@ void main_start (void) {
   player_dy = 0;
   player_direction = Right;
   player_grounded = 1;
+  dialogue_ptr = 0;
+  victory_lap = 0;
 
   for(i = 0; i < 4; i++) {
     score[i] = '0';
@@ -297,6 +309,7 @@ void update_death (void) {
     if (death_counter == 0 || player_y > FP(0, 0xf0, 0x00)) {
       player_y = FP(0, 0xff, 0x00);
       if (((TRUNC(camera_x)) & 0x7f) == 0) {
+        set_scroll_x((unsigned int)INT(camera_x));
         game_over_start();
       } else {
         camera_x -= FP(0, 0x01, 0x00);
@@ -304,6 +317,43 @@ void update_death (void) {
     } else {
       if (player_y < FP(0, 0xf0, 0x00)) player_y += FP(0, 0x4, 0x00);
       if (death_counter > 0) death_counter--;
+    }
+  }
+}
+
+void update_victory_lap (void) {
+  if (((TRUNC(camera_x)) & 0x7f) == 0) {
+    set_scroll_x((unsigned int)INT(camera_x));
+    game_over_start();
+  } else {
+    camera_x += FP(0, 0x01, 0x00);
+  }
+}
+
+void dialogue_update(void) {
+  temp_char = *dialogue_ptr;
+  if (temp_char == '@') {
+    if (pad1_new & (PAD_A | PAD_B | PAD_START)) {
+      multi_vram_buffer_horz(erase_dialogue, 18, NTADR_A(3, 2));
+      dialogue_ptr = 0;
+    }
+  } else if (temp_char == '#') {
+    if (pad1_new & (PAD_A | PAD_B | PAD_START)) {
+      multi_vram_buffer_horz(erase_dialogue, 18, NTADR_A(3, 2));
+      dialogue_ptr = 0;
+      start_victory();
+    }
+  } else if (temp_char == '\n') {
+    if (pad1_new & (PAD_A | PAD_B | PAD_START)) {
+      multi_vram_buffer_horz(erase_dialogue, 18, NTADR_A(3, 2));
+      dialogue_ptr++;
+      dialogue_column = 3;
+    }
+  } else {
+    if ((get_frame_count() & 0b1111) == 0 || (pad1 & (PAD_A | PAD_B))) {
+      one_vram_buffer(temp_char, NTADR_A(dialogue_column, 2));
+      dialogue_column++;
+      dialogue_ptr++;
     }
   }
 }
@@ -316,11 +366,16 @@ void main_upkeep (void) {
   double_buffer[double_buffer_index++] = 0b10001000 | (TRUNC(camera_x) >= 0x80);
   double_buffer[double_buffer_index++] = 0xf5;
   double_buffer[double_buffer_index++] = temp_int & 0xff;
-  //double_buffer[double_buffer_index++] = ((temp_int & 0xF8) << 2);
 
   update_load_column_state();
 
-  if (player_direction == Left || player_direction == Right) {
+  if (dialogue_ptr) {
+    dialogue_update();
+    update_player_y();
+    update_camera();
+  } else if (victory_lap) {
+    update_victory_lap();
+  } else if (player_direction == Left || player_direction == Right) {
     player_input();
     update_player_y();
     update_player_x();
@@ -507,6 +562,8 @@ void entity_blob_update() {
 
 void entity_spike_update() {
   entity_movable_update();
+  temp_x = TRUNC(entity_x[i]);
+  temp_y = TRUNC(entity_y[i]);
   if ((unsigned char) (TRUNC(player_x + FP(0, 3, 0))) >= (unsigned char) (temp_x - TRUNC(FP(0,7,0))) &&
       (unsigned char) (TRUNC(player_x - FP(0, 3, 0)))  <= (unsigned char) (temp_x + TRUNC(FP(0,7,0))) &&
       (unsigned char) (TRUNC(player_y + FP(0, 0, 0)))  >= (unsigned char) (temp_y - TRUNC(FP(0,8,0))) &&
@@ -516,7 +573,15 @@ void entity_spike_update() {
 }
 
 void entity_mapgoal_update() {
-  // TODO collide with goal
+  temp_x = TRUNC(entity_x[i]);
+  temp_y = TRUNC(entity_y[i]);
+  if ((unsigned char) (TRUNC(player_x + FP(0, 3, 0))) >= (unsigned char) (temp_x - TRUNC(FP(0,8,0))) &&
+      (unsigned char) (TRUNC(player_x - FP(0, 3, 0)))  <= (unsigned char) (temp_x + TRUNC(FP(0,8,0))) &&
+      (unsigned char) (TRUNC(player_y + FP(0, 0, 0)))  >= (unsigned char) (temp_y - TRUNC(FP(0,30,0))) &&
+      (unsigned char) (TRUNC(player_y - FP(0, 13, 0))) <= (unsigned char) (temp_y + TRUNC(FP(0,0,0)))) {
+    dialogue_ptr = (char  *) victory_dialogue;
+    dialogue_column = 3;
+  }
 }
 
 void entity_star_render() {
@@ -667,4 +732,8 @@ unsigned char __fastcall__ player_bg_collide(signed char dx, signed char dy) {
 void start_dying (void) {
   player_direction = Up;
   death_counter = 0x20;
+}
+
+void start_victory (void) {
+  victory_lap = 1;
 }

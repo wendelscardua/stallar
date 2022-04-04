@@ -2,6 +2,8 @@
   Star
   Blob
   Spike
+  Mapgoal
+  Extrastar
 .endenum
 
 .include "maps/level-00.inc"
