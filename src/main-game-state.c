@@ -119,9 +119,7 @@ void main_start (void) {
   player_grounded = 1;
 }
 
-void main_upkeep (void) {
-  update_attributes();
-
+void player_input() {
   if (pad1_new & PAD_RIGHT) {
     player_direction = Right;
     if (player_dx < INITIAL_H_SPEED) player_dx = INITIAL_H_SPEED;
@@ -139,7 +137,9 @@ void main_upkeep (void) {
   if (player_grounded && (pad1_new & PAD_A)) {
     player_dy = JUMP_IMPULSE;
   }
+}
 
+void update_player_y() {
   // update player y
   if ((pad1 & PAD_A) && player_dy < 0) {
     player_dy += JUMP_GRAVITY;
@@ -149,7 +149,8 @@ void main_upkeep (void) {
   temp_int_x = player_x;
   temp_int_y = player_y + player_dy;
   if (player_dy > 0) {
-    if (player_bg_collide(PLAYER_X1, PLAYER_Y2) || player_bg_collide(PLAYER_X2, PLAYER_Y2)) {
+    if (player_bg_collide(PLAYER_X1, PLAYER_Y2) ||
+        player_bg_collide(PLAYER_X2, PLAYER_Y2)) {
       player_dy = 0;
       temp_int_y = player_y;
       player_grounded  = 1;
@@ -166,8 +167,9 @@ void main_upkeep (void) {
     }
   }
   player_y = temp_int_y;
+}
 
-
+void update_player_x (void) {
   // update player x
   temp_int_y = player_y;
   temp_int_x = player_x + player_dx;
@@ -194,7 +196,9 @@ void main_upkeep (void) {
       if (player_dx > 0) player_dx = 0;
     }
   }
+}
 
+void update_camera (void) {
   // update camera
   if (player_x - camera_x > CAM_R_LIMIT) {
     camera_x = player_x - CAM_R_LIMIT;
@@ -223,6 +227,18 @@ void main_upkeep (void) {
     }
     load_next_column();
   }
+}
+
+void main_upkeep (void) {
+  update_attributes();
+
+  player_input();
+
+  update_player_y();
+
+  update_player_x();
+
+  update_camera();
 }
 
 void main_sprites (void) {
