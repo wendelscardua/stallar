@@ -239,22 +239,16 @@ void select_level (void) {
 }
 
 void load_next_column (void) {
-  if (next_metatile_column < 16) {
-    temp_int = NTADR_A((next_metatile_column * 2), 0);
-  } else {
-    temp_int = NTADR_B(((next_metatile_column & 15) * 2), 0);
-  }
-
-  k = 0;
+  temp_int = 0;
 
   for(j = 0; j < 30; j += 2) {
     temp_char = *current_level_ptr++;
 
     // update collision info
-    k <<= 1;
+    temp_int <<= 1;
     if (temp_char == 1 || temp_char == 3) {
       // TODO: pull from metatile metadata
-      k |= 1;
+      temp_int |= 1;
     }
 
     // prepare buffers for vram updates
@@ -286,7 +280,13 @@ void load_next_column (void) {
     attributes[temp] = (attributes[temp] & (~temp_char)) | temp_attr;
   }
 
-  collision_mask[next_metatile_column] = k;
+  collision_mask[next_metatile_column] = temp_int;
+
+  if (next_metatile_column < 16) {
+    temp_int = NTADR_A((next_metatile_column * 2), 0);
+  } else {
+    temp_int = NTADR_B(((next_metatile_column & 15) * 2), 0);
+  }
 
   multi_vram_buffer_vert((const char *)first_column_stripe, 30, temp_int);
   multi_vram_buffer_vert((const char *)second_column_stripe, 30, temp_int + 1);
@@ -335,5 +335,5 @@ unsigned char __fastcall__ player_bg_collide(signed char dx, signed char dy) {
   temp_x = ((((unsigned int) INT(temp_int_x)) & 0x1ff) + dx) >> 4;
   temp_y = (INT(temp_int_y) + dy) >> 4;
 
-  return collision_mask[temp_x] & collision_row_mask[temp_y];
+  return (collision_mask[temp_x] & collision_row_mask[temp_y]) != 0;
 }
