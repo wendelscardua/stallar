@@ -36,4 +36,7 @@ extern game_state_t current_game_state;
 // TODO: round insted of truncate?
 #define INT(unsigned_fixed_point) ((unsigned_fixed_point)>>7)
 
+// take just the msb, enough for some comparisons
+#define TRUNC(unsigned_fixed_point) ((unsigned_fixed_point) >> 8)
+
 #endif

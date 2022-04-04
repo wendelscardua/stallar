@@ -26,7 +26,7 @@
 
 #define PLAYER_X1 ((signed char) -3)
 #define PLAYER_X2 ((signed char) 3)
-#define PLAYER_Y1 ((signed char) -14)
+#define PLAYER_Y1 ((signed char) -13)
 #define PLAYER_Y2 ((signed char) 0)
 
 #define MAX_ENTITIES 16
@@ -364,6 +364,15 @@ void load_next_column (void) {
 }
 
 void entity_star_update() {
+  temp_x = TRUNC(entity_x[i]);
+  temp_y = TRUNC(entity_y[i]);
+
+  if ((unsigned char) (TRUNC(player_x + FP(0, 3, 0))) >= (unsigned char) (temp_x - TRUNC(FP(0,3,0))) &&
+      (unsigned char) (TRUNC(player_x - FP(0, 3, 0)))  <= (unsigned char) (temp_x + TRUNC(FP(0,3,0))) &&
+      (unsigned char) (TRUNC(player_y + FP(0, 0, 0)))  >= (unsigned char) (temp_y - TRUNC(FP(0,10,0))) &&
+      (unsigned char) (TRUNC(player_y - FP(0, 13, 0))) <= (unsigned char) (temp_y + TRUNC(FP(0,3,0)))) {
+    entity_state[i] = Inactive;
+  }
 }
 
 void entity_blob_update() {
