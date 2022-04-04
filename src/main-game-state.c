@@ -296,10 +296,10 @@ void update_death (void) {
   if (player_direction == Down) {
     if (death_counter == 0 || player_y > FP(0, 0xf0, 0x00)) {
       player_y = FP(0, 0xff, 0x00);
-      if ((TRUNC(camera_x)) == 0) {
+      if (((TRUNC(camera_x)) & 0x7f) == 0) {
         game_over_start();
       } else {
-        camera_x -= FP(0, 0x00, 0x80);
+        camera_x -= FP(0, 0x01, 0x00);
       }
     } else {
       if (player_y < FP(0, 0xf0, 0x00)) player_y += FP(0, 0x4, 0x00);
@@ -324,13 +324,11 @@ void main_upkeep (void) {
     player_input();
     update_player_y();
     update_player_x();
+    update_entities();
+    update_camera();
   } else {
     update_death();
   }
-
-  update_camera();
-
-  update_entities();
 }
 
 void main_sprites (void) {
