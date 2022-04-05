@@ -18,5 +18,5 @@
 
 .export _levels, _num_levels
 _levels:
-.word _level_00, _level_01, _level_02, _level_03
+.word _level_00, _level_01, _level_02, _level_03, _level_04, _level_05, _level_06
 _num_levels: .byte (* - _levels) / 2
