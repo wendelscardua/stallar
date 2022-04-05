@@ -115,7 +115,9 @@ assets/levels.o: assets/levels.s \
                  assets/maps/level-00.inc \
                  assets/maps/level-01.inc \
                  assets/maps/level-02.inc \
-                 assets/maps/level-03.inc
+                 assets/maps/level-03.inc \
+                 assets/maps/level-04.inc \
+                 assets/maps/level-05.inc
 	ca65 $< ${CA65_FLAGS}
 
 assets/metatiles.s: assets/metatiles.map tools/generate-metatiles.rb
