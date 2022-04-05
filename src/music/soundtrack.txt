@@ -1,7 +1,7 @@
 # FamiTracker text export 0.4.2
 
 # Song information
-TITLE           "Template OST"
+TITLE           "Stallar OST"
 AUTHOR          "Various Artists"
 COPYRIGHT       "2021"
 

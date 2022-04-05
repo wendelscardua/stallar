@@ -158,7 +158,7 @@ void main_start (void) {
   }
   vram_adr(NTADR_A(0,0));
 
-  music_play(Cave);
+  music_play(RPGBattleTheme);
 
   set_scroll_x(0);
   set_scroll_y(0);

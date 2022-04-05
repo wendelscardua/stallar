@@ -53,7 +53,11 @@ void game_over_start (void) {
   flush_vram_update_nmi();
   clear_vram_buffer();
 
-  music_play(Cave);
+  if (victory_lap) {
+    music_play(VictoryLoop);
+  } else {
+    music_play(Cave);
+  }
 
   set_scroll_x(0);
   set_scroll_y(0);
