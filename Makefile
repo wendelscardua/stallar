@@ -114,13 +114,12 @@ assets/metatiles.o: assets/metatiles.s
 assets/levels.o: assets/levels.s \
                  assets/maps/level-00.inc \
                  assets/maps/level-01.inc \
-                 assets/maps/level-02.inc
+                 assets/maps/level-02.inc \
+                 assets/maps/level-03.inc
 	ca65 $< ${CA65_FLAGS}
 
 assets/metatiles.s: assets/metatiles.map tools/generate-metatiles.rb
 	ruby tools/generate-metatiles.rb $< $@
-
-assets/level.s:
 
 assets/maps/%.inc: assets/maps/%.tmx tools/process-level.rb
 	ruby tools/process-level.rb $< $@
