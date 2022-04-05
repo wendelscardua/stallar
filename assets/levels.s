@@ -10,6 +10,9 @@
 .include "maps/level-01.inc"
 .include "maps/level-02.inc"
 .include "maps/level-03.inc"
+.include "maps/level-04.inc"
+.include "maps/level-05.inc"
+.include "maps/level-06.inc"
 
 .segment "RODATA"
 
