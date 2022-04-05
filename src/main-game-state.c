@@ -508,7 +508,7 @@ void entity_star_update() {
       }
     }
 
-    // TODO: refresh score display
+    // refresh score display
     for(j = 0; j < 3; j++) {
       if (score[j] != '0') {
         break;

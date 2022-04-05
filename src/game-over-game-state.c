@@ -9,6 +9,18 @@
 #include "../assets/palettes.h"
 #include "music/soundtrack.h"
 
+#pragma bss-name(push, "ZEROPAGE")
+extern unsigned char score[4];
+#pragma zpsym("score")
+extern unsigned char victory_lap;
+#pragma zpsym("victory_lap")
+#pragma bss-name(pop)
+
+#pragma rodata-name ("RODATA")
+#pragma code-name ("CODE")
+
+const char win[] = "You won!!!";
+
 void game_over_start (void) {
   current_game_state = GameOver;
   if (irq_array[0] != 0xff) {
@@ -27,6 +39,19 @@ void game_over_start (void) {
   // draw some things
   vram_adr(NTADR_A(0,0));
   vram_unrle(game_over_nametable);
+
+  if (victory_lap) {
+    multi_vram_buffer_horz(win, 10, NTADR_A(8, 9));
+  }
+
+  for(j = 0; j < 3; j++) {
+    if (score[j] != '0') {
+        break;
+    }
+  }
+  multi_vram_buffer_horz((const char *) score + j, 4 - j, NTADR_A(10 + j, 13));
+  flush_vram_update_nmi();
+  clear_vram_buffer();
 
   music_play(Cave);
 
