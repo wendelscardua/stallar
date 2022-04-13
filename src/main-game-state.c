@@ -228,7 +228,9 @@ void update_player_y() {
     }
   } else if (player_dy < 0) {
     player_grounded = 0;
-    if (player_bg_collide(PLAYER_X1, PLAYER_Y1) || player_bg_collide(PLAYER_X2, PLAYER_Y1)) {
+    if (temp_int_y <= FP(0, 0x10, 0x00)) {
+      temp_int_y = player_y;
+    } else if (player_bg_collide(PLAYER_X1, PLAYER_Y1) || player_bg_collide(PLAYER_X2, PLAYER_Y1)) {
       player_dy = 0;
       temp_int_y = player_y;
     }
