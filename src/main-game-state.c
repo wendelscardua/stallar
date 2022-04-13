@@ -208,6 +208,13 @@ void update_player_y() {
   }
   temp_int_x = player_x;
   temp_int_y = player_y + player_dy;
+
+  if (temp_int_y >= FP(0, 0xf0, 0x00)) {
+    player_y = temp_int_y;
+    start_dying();
+    return;
+  }
+
   if (player_dy > 0) {
     if (player_bg_collide(PLAYER_X1, PLAYER_Y2) ||
         player_bg_collide(PLAYER_X2, PLAYER_Y2)) {
@@ -227,10 +234,6 @@ void update_player_y() {
     }
   }
   player_y = temp_int_y;
-
-  if (player_y >= FP(0, 0xf0, 0x00)) {
-    start_dying();
-  }
 }
 
 void update_player_x (void) {
