@@ -727,16 +727,16 @@ const unsigned int collision_row_mask[] =
    0b0000000010000000,
    0b0000000001000000,
    0b0000000000100000,
-     0b0000000000010000,
-     0b0000000000001000,
+   0b0000000000010000,
+   0b0000000000001000,
    0b0000000000000100,
    0b0000000000000010,
    0b0000000000000001
   };
 
 unsigned char __fastcall__ player_bg_collide(signed char dx, signed char dy) {
-  temp_x = ((((unsigned int) INT(temp_int_x)) & 0x1ff) + dx) >> 4;
-  temp_y = (INT(temp_int_y) + dy) >> 4;
+  temp_x = ((((unsigned int) INT(temp_int_x)) + dx) & 0x1ff) >> 4;
+  temp_y = (((unsigned int) INT(temp_int_y) + dy) & 0xff) >> 4;
 
   return (collision_mask[temp_x] & collision_row_mask[temp_y]) != 0;
 }
