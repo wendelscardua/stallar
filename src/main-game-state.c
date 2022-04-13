@@ -56,6 +56,8 @@ unsigned char dialogue_column;
 
 unsigned char victory_lap;
 
+unsigned char player_trunc_x1, player_trunc_y1, player_trunc_x2, player_trunc_y2;
+
 #pragma bss-name(pop)
 
 #pragma bss-name(push, "BSS")
@@ -293,6 +295,11 @@ void update_camera (void) {
 }
 
 void update_entities (void) {
+  player_trunc_x1 = (unsigned char) (TRUNC(player_x - FP(0, 3, 0)));
+  player_trunc_x2 = (unsigned char) (TRUNC(player_x + FP(0, 3, 0)));
+  player_trunc_y1 = (unsigned char) (TRUNC(player_y - FP(0, 13, 0)));
+  player_trunc_y2 = (unsigned char) (TRUNC(player_y + FP(0, 0, 0)));
+
   for(i = 0; i < MAX_ENTITIES; i++) {
     if (entity_state[i] != Inactive) {
       temp_int_x = entity_x[i] - camera_x;
@@ -484,10 +491,10 @@ void entity_star_update() {
   temp_x = TRUNC(entity_x[i]);
   temp_y = TRUNC(entity_y[i]);
 
-  if ((unsigned char) (TRUNC(player_x + FP(0, 3, 0))) >= (unsigned char) (temp_x - TRUNC(FP(0,3,0))) &&
-      (unsigned char) (TRUNC(player_x - FP(0, 3, 0)))  <= (unsigned char) (temp_x + TRUNC(FP(0,3,0))) &&
-      (unsigned char) (TRUNC(player_y + FP(0, 0, 0)))  >= (unsigned char) (temp_y - TRUNC(FP(0,10,0))) &&
-      (unsigned char) (TRUNC(player_y - FP(0, 13, 0))) <= (unsigned char) (temp_y + TRUNC(FP(0,3,0)))) {
+  if (player_trunc_x2 >= (unsigned char) (temp_x - TRUNC(FP(0,3,0))) &&
+      player_trunc_x1 <= (unsigned char) (temp_x + TRUNC(FP(0,3,0))) &&
+      player_trunc_y2 >= (unsigned char) (temp_y - TRUNC(FP(0,10,0))) &&
+      player_trunc_y1 <= (unsigned char) (temp_y + TRUNC(FP(0,3,0)))) {
     entity_state[i] = Inactive;
 
     // increase score
@@ -555,19 +562,19 @@ void entity_blob_update() {
 
   if (player_dy > 0) {
     // upper blob collision
-    if ((unsigned char) (TRUNC(player_x + FP(0, 3, 0))) >= (unsigned char) (temp_x - TRUNC(FP(0,8,0))) &&
-        (unsigned char) (TRUNC(player_x - FP(0, 3, 0)))  <= (unsigned char) (temp_x + TRUNC(FP(0,8,0))) &&
-        (unsigned char) (TRUNC(player_y + FP(0, 0, 0)))  >= (unsigned char) (temp_y - TRUNC(FP(0,8,0))) &&
-        (unsigned char) (TRUNC(player_y - FP(0, 13, 0))) <= (unsigned char) (temp_y - TRUNC(FP(0,3,0)))) {
+    if (player_trunc_x2 >= (unsigned char) (temp_x - TRUNC(FP(0,8,0))) &&
+        player_trunc_x1 <= (unsigned char) (temp_x + TRUNC(FP(0,8,0))) &&
+        player_trunc_y2 >= (unsigned char) (temp_y - TRUNC(FP(0,8,0))) &&
+        player_trunc_y1 <= (unsigned char) (temp_y - TRUNC(FP(0,3,0)))) {
       entity_state[i] = Inactive; // TODO: maybe dying?
       player_dy = JUMP_IMPULSE;
       return;
     }
   }
-  if ((unsigned char) (TRUNC(player_x + FP(0, 3, 0))) >= (unsigned char) (temp_x - TRUNC(FP(0,8,0))) &&
-      (unsigned char) (TRUNC(player_x - FP(0, 3, 0)))  <= (unsigned char) (temp_x + TRUNC(FP(0,8,0))) &&
-      (unsigned char) (TRUNC(player_y + FP(0, 0, 0)))  >= (unsigned char) (temp_y - TRUNC(FP(0,8,0))) &&
-      (unsigned char) (TRUNC(player_y - FP(0, 13, 0))) <= (unsigned char) (temp_y + TRUNC(FP(0,0,0)))) {
+  if (player_trunc_x2 >= (unsigned char) (temp_x - TRUNC(FP(0,8,0))) &&
+      player_trunc_x1 <= (unsigned char) (temp_x + TRUNC(FP(0,8,0))) &&
+      player_trunc_y2 >= (unsigned char) (temp_y - TRUNC(FP(0,8,0))) &&
+      player_trunc_y1 <= (unsigned char) (temp_y + TRUNC(FP(0,0,0)))) {
     start_dying();
   }
 }
@@ -576,10 +583,10 @@ void entity_spike_update() {
   entity_movable_update();
   temp_x = TRUNC(entity_x[i]);
   temp_y = TRUNC(entity_y[i]);
-  if ((unsigned char) (TRUNC(player_x + FP(0, 3, 0))) >= (unsigned char) (temp_x - TRUNC(FP(0,7,0))) &&
-      (unsigned char) (TRUNC(player_x - FP(0, 3, 0)))  <= (unsigned char) (temp_x + TRUNC(FP(0,7,0))) &&
-      (unsigned char) (TRUNC(player_y + FP(0, 0, 0)))  >= (unsigned char) (temp_y - TRUNC(FP(0,8,0))) &&
-      (unsigned char) (TRUNC(player_y - FP(0, 13, 0))) <= (unsigned char) (temp_y + TRUNC(FP(0,0,0)))) {
+  if (player_trunc_x2 >= (unsigned char) (temp_x - TRUNC(FP(0,7,0))) &&
+      player_trunc_x1 <= (unsigned char) (temp_x + TRUNC(FP(0,7,0))) &&
+      player_trunc_y2 >= (unsigned char) (temp_y - TRUNC(FP(0,8,0))) &&
+      player_trunc_y1 <= (unsigned char) (temp_y + TRUNC(FP(0,0,0)))) {
     start_dying();
   }
 }
@@ -587,10 +594,10 @@ void entity_spike_update() {
 void entity_mapgoal_update() {
   temp_x = TRUNC(entity_x[i]);
   temp_y = TRUNC(entity_y[i]);
-  if ((unsigned char) (TRUNC(player_x + FP(0, 3, 0))) >= (unsigned char) (temp_x - TRUNC(FP(0,8,0))) &&
-      (unsigned char) (TRUNC(player_x - FP(0, 3, 0)))  <= (unsigned char) (temp_x + TRUNC(FP(0,8,0))) &&
-      (unsigned char) (TRUNC(player_y + FP(0, 0, 0)))  >= (unsigned char) (temp_y - TRUNC(FP(0,30,0))) &&
-      (unsigned char) (TRUNC(player_y - FP(0, 13, 0))) <= (unsigned char) (temp_y + TRUNC(FP(0,0,0)))) {
+  if (player_trunc_x2 >= (unsigned char) (temp_x - TRUNC(FP(0,8,0))) &&
+      player_trunc_x1 <= (unsigned char) (temp_x + TRUNC(FP(0,8,0))) &&
+      player_trunc_y2 >= (unsigned char) (temp_y - TRUNC(FP(0,30,0))) &&
+      player_trunc_y1 <= (unsigned char) (temp_y + TRUNC(FP(0,0,0)))) {
     dialogue_ptr = (char  *) victory_dialogue;
     dialogue_column = 3;
   }
