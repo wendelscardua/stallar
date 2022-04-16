@@ -53,6 +53,7 @@ unsigned char score[4];
 
 char * dialogue_ptr;
 unsigned char dialogue_column;
+unsigned int dialogue_sleep;
 
 unsigned char victory_lap;
 
@@ -352,31 +353,38 @@ void update_victory_lap (void) {
   }
 }
 
+#define DIALOGUE_END_DELAY (3 * 60)
+#define DIALOGUE_NEXT_SENTENCE_DELAY (2 * 60)
+
 void dialogue_update(void) {
   temp_char = *dialogue_ptr;
 
   if (temp_char == '\xff') {
-    if (pad1_new & (PAD_A | PAD_B | PAD_START)) {
+    if ((pad1_new & (PAD_A | PAD_B | PAD_START)) || dialogue_sleep++ >= DIALOGUE_END_DELAY) {
       multi_vram_buffer_horz(erase_dialogue, 18, NTADR_A(3, 2));
       dialogue_ptr = 0;
+      dialogue_sleep = 0;
     }
   } else if (temp_char == '\xfe') {
-    if (pad1_new & (PAD_A | PAD_B | PAD_START)) {
+    if ((pad1_new & (PAD_A | PAD_B | PAD_START)) || dialogue_sleep++ >= DIALOGUE_END_DELAY) {
       multi_vram_buffer_horz(erase_dialogue, 18, NTADR_A(3, 2));
       dialogue_ptr = 0;
+      dialogue_sleep = 0;
       start_victory();
     } else return;
   } else if (temp_char == '\xfd') {
-    if (pad1_new & (PAD_A | PAD_B | PAD_START)) {
+    if ((pad1_new & (PAD_A | PAD_B | PAD_START)) || dialogue_sleep++ >= DIALOGUE_NEXT_SENTENCE_DELAY) {
       multi_vram_buffer_horz(erase_dialogue, 18, NTADR_A(3, 2));
       dialogue_ptr++;
       dialogue_column = 3;
+      dialogue_sleep = 0;
     } else return;
   } else {
-    if ((get_frame_count() & 0b1111) == 0 || (pad1 & (PAD_A | PAD_B))) {
+    if ((get_frame_count() & 0b11) == 0 || (pad1 & (PAD_A | PAD_B))) {
       one_vram_buffer(temp_char, NTADR_A(dialogue_column, 2));
       dialogue_column++;
       dialogue_ptr++;
+      dialogue_sleep = 0;
     }
   }
 }
