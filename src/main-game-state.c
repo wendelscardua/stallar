@@ -14,8 +14,8 @@
 #include "../assets/levels.h"
 #include "music/soundtrack.h"
 
-#define INITIAL_H_SPEED FP(0, 1, 0)
-#define MAX_H_SPEED FP(0, 4, 0)
+#define INITIAL_H_SPEED FP(0, 1, 0x40)
+#define MAX_H_SPEED FP(0, 2, 0)
 #define H_ACCEL FP(0, 0, 0x08)
 #define FRICTION FP(0, 0, 0x40)
 #define GRAVITY FP(0, 0, 0x50)
