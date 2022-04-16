@@ -6,7 +6,9 @@ typedef enum
    SFXStart,
    SFXAchieved,
    SFXHit,
-   SFXText
+   SFXText,
+   SFXJump,
+   SFXBling
   } sfx_t;
 
 #endif
