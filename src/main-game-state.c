@@ -1,5 +1,6 @@
 #include "lib/neslib.h"
 #include "lib/nesdoug.h"
+#include "music/soundfx.h"
 #include "charmap.h"
 #include "directions.h"
 #include "entities.h"
@@ -385,6 +386,7 @@ void dialogue_update(void) {
       dialogue_column++;
       dialogue_ptr++;
       dialogue_sleep = 0;
+      sfx_play(SFXText, 0);
     }
   }
 }

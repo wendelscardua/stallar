@@ -6,10 +6,6 @@ typedef enum
    SFXStart,
    SFXAchieved,
    SFXHit,
-   SFXKnock,
-   SFXTeleport,
-   SFXCursor,
-   SFXSelect,
    SFXText
   } sfx_t;
 
