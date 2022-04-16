@@ -7,8 +7,10 @@
 ; Edited to work with MMC3 code
 .define SOUND_BANK 4
 
+.segment "FAMITONE"
 
-FT_BASE_ADR		= $0100		;page in RAM, should be $xx00
+FT_BASE_ADR: .res $100  ;page in RAM, should be $xx00
+
 FT_DPCM_OFF		= $d500		;$c000..$ffc0, 64-byte steps
 FT_SFX_STREAMS	= 4			;number of sound effects played at once, 1..4
 
