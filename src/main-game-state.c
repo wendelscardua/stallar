@@ -387,7 +387,7 @@ void dialogue_update(void) {
       dialogue_column++;
       dialogue_ptr++;
       dialogue_sleep = 0;
-      sfx_play(SFXText, 0);
+      sfx_play(SFXText, 3);
     }
   }
 }
@@ -538,7 +538,7 @@ void entity_star_update() {
       }
     }
     multi_vram_buffer_horz((const char *) score + j, 4 - j, NTADR_A(18 + j, 3));
-    sfx_play(SFXBling, 0);
+    sfx_play(SFXBling, 1);
   }
 }
 
@@ -620,7 +620,7 @@ void entity_mapgoal_update() {
       player_trunc_y1 <= (unsigned char) (temp_y + TRUNC(FP(0,0,0)))) {
     dialogue_ptr = (char *) victory_dialogue;
     dialogue_column = 3;
-    sfx_play(SFXAchieved, 0);
+    sfx_play(SFXAchieved, 2);
   }
 }
 
