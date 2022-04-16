@@ -68,11 +68,9 @@ void main (void) {
   unseeded = 1;
 
   set_vram_buffer();
-  clear_vram_buffer();
 
   while (1){ // infinite loop
     ppu_wait_nmi();
-    clear_vram_buffer();
 
     double_buffer_index = 0;
 

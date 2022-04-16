@@ -17,8 +17,6 @@ void title_start (void) {
     double_buffer[0] = 0xff;
   }
 
-  clear_vram_buffer();
-
   pal_fade_to(4, 0);
   ppu_off(); // screen off
   // draw some things

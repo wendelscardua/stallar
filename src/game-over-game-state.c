@@ -29,8 +29,6 @@ void game_over_start (void) {
     double_buffer[0] = 0xff;
   }
 
-  clear_vram_buffer();
-
   pal_fade_to(4, 0);
 
   oam_clear();
@@ -50,8 +48,7 @@ void game_over_start (void) {
     }
   }
   multi_vram_buffer_horz((const char *) score + j, 4 - j, NTADR_A(10 + j, 13));
-  flush_vram_update_nmi();
-  clear_vram_buffer();
+  flush_vram_update2();
 
   if (victory_lap) {
     music_play(VictoryLoop);

@@ -119,8 +119,6 @@ void main_start (void) {
     double_buffer[0] = 0xff;
   }
 
-  clear_vram_buffer();
-
   pal_fade_to(4, 0);
   ppu_off(); // screen off
   // draw some things
@@ -152,13 +150,11 @@ void main_start (void) {
   select_level();
 
   for(i = 0; i < 18; i++) {
-    clear_vram_buffer();
     load_next_column();
-    flush_vram_update_nmi();
-    clear_vram_buffer();
+    flush_vram_update2();
     update_load_column_state();
     update_load_column_state();
-    flush_vram_update_nmi();
+    flush_vram_update2();
   }
   vram_adr(NTADR_A(0,0));
 
