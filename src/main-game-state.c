@@ -585,6 +585,7 @@ void entity_blob_update() {
         player_trunc_y1 <= (unsigned char) (temp_y - TRUNC(FP(0,3,0)))) {
       entity_state[i] = Inactive; // TODO: maybe dying?
       player_dy = JUMP_IMPULSE;
+      sfx_play(SFXJump, 0);
       return;
     }
   }
@@ -592,6 +593,7 @@ void entity_blob_update() {
       player_trunc_x1 <= (unsigned char) (temp_x + TRUNC(FP(0,8,0))) &&
       player_trunc_y2 >= (unsigned char) (temp_y - TRUNC(FP(0,8,0))) &&
       player_trunc_y1 <= (unsigned char) (temp_y + TRUNC(FP(0,0,0)))) {
+    sfx_play(SFXHit, 0);
     start_dying();
   }
 }
@@ -604,6 +606,7 @@ void entity_spike_update() {
       player_trunc_x1 <= (unsigned char) (temp_x + TRUNC(FP(0,7,0))) &&
       player_trunc_y2 >= (unsigned char) (temp_y - TRUNC(FP(0,8,0))) &&
       player_trunc_y1 <= (unsigned char) (temp_y + TRUNC(FP(0,0,0)))) {
+    sfx_play(SFXHit, 0);
     start_dying();
   }
 }
@@ -615,7 +618,7 @@ void entity_mapgoal_update() {
       player_trunc_x1 <= (unsigned char) (temp_x + TRUNC(FP(0,8,0))) &&
       player_trunc_y2 >= (unsigned char) (temp_y - TRUNC(FP(0,30,0))) &&
       player_trunc_y1 <= (unsigned char) (temp_y + TRUNC(FP(0,0,0)))) {
-    dialogue_ptr = (char  *) victory_dialogue;
+    dialogue_ptr = (char *) victory_dialogue;
     dialogue_column = 3;
     sfx_play(SFXAchieved, 0);
   }
