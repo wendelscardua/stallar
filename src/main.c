@@ -14,7 +14,6 @@
 #include "nametable_loader.h"
 #include "temp.h"
 #include "wram.h"
-#include "../assets/metatiles.h"
 #include "../assets/nametables.h"
 #include "../assets/palettes.h"
 #include "../assets/sprites.h"
@@ -58,8 +57,6 @@ void main (void) {
   set_chr_mode_5(BG_MAIN_3);
   set_chr_mode_0(SPRITE_0);
   set_chr_mode_1(SPRITE_1);
-
-  set_mt_pointer(metatiles);
 
   ppu_on_all();
 

@@ -453,13 +453,13 @@ void load_next_column (void) {
     }
 
     // prepare buffers for vram updates
-    temp = 5 * temp_char;
-    first_column_stripe[j] = metatiles[temp];
-    first_column_stripe[j+1] = metatiles[temp+2];
-    second_column_stripe[j] = metatiles[temp+1];
-    second_column_stripe[j+1] = metatiles[temp+3];
+    first_column_stripe[j] = metatiles_ul[temp_char];
+    first_column_stripe[j+1] = metatiles_dl[temp_char];
+    second_column_stripe[j] = metatiles_ur[temp_char];
+    second_column_stripe[j+1] = metatiles_dr[temp_char];
 
-    temp_attr = metatiles[temp+4];
+    temp_attr = metatiles_attr[temp_char];
+
     temp_char = 0b11;
 
     temp_y = j >> 1;
