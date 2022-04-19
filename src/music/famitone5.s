@@ -979,12 +979,6 @@ rts
 tax ;a and x zero
 rts
 
-
-duty_table:
-.byte $30,$70,$b0,$f0
-duty_table_nz: ;noise
-.byte $00,$80,$00,$80
-
 Apply_Effects:
 ;y = channel
 ;temp_low, temp_high = note frequency in
@@ -1212,37 +1206,6 @@ Vib_Skip:
 lda temp_low	; pass the final frequency back to the music routine
 ldx temp_high
 rts
-
-
-Vib_Offset: ;zero skipped, here for filler
-;speed 6
-.byte 0,0,11,22,33,44,55,66,77,88,99,110
-
-
-Vib_Table:	; vibrato
-
-;speed 6
-.byte 0,1,1,1,1,  0,0,256-1,256-1,256-1,  256-1 ;1
-.byte 0,1,2,2,1,  0,0,256-1,256-2,256-2,  256-1 ;2
-.byte 0,2,3,3,2,  1,256-1,256-3,256-4,256-4,  256-2 ;3
-.byte 0,3,5,6,5,  2,256-2,256-5,256-6,256-5,  256-3 ;4
-.byte 0,3,6,6,5,  2,256-2,256-5,256-6,256-6,  256-3 ;5
-.byte 0,5,8,9,7,  3,256-3,256-7,256-9,256-8,  256-5 ;6
-.byte 0,6,10,11,8,  3,256-3,256-8,256-11,256-10,  256-6 ;7
-.byte 0,7,12,13,10,  4,256-4,256-10,256-13,256-12,  256-7 ;8
-.byte 0,9,15,16,12,  4,256-4,256-12,256-16,256-15,  256-9 ;9
-.byte 0,10,17,19,14,  5,256-5,256-14,256-19,256-17,  256-10 ;A
-
-
-
-
-
-
-
-
-
-
-
 
 ;internal routine, sets up envelopes of a channel according to current instrument
 ;in X envelope group offset, A instrument number
@@ -1943,6 +1906,48 @@ rts
 .endif
 
 
+Multiply:
+; **
+;a = note volume
+;x = volume column
+
+stx multiple1
+asl a
+asl a
+asl a
+asl a
+ora multiple1
+tax
+lda ft_volume_table, x
+rts
+
+.segment .concat("BANK", .string(SOUND_BANK))
+
+duty_table:
+.byte $30,$70,$b0,$f0
+duty_table_nz: ;noise
+.byte $00,$80,$00,$80
+
+Vib_Offset: ;zero skipped, here for filler
+;speed 6
+.byte 0,0,11,22,33,44,55,66,77,88,99,110
+
+
+Vib_Table:	; vibrato
+
+;speed 6
+.byte 0,1,1,1,1,  0,0,256-1,256-1,256-1,  256-1 ;1
+.byte 0,1,2,2,1,  0,0,256-1,256-2,256-2,  256-1 ;2
+.byte 0,2,3,3,2,  1,256-1,256-3,256-4,256-4,  256-2 ;3
+.byte 0,3,5,6,5,  2,256-2,256-5,256-6,256-5,  256-3 ;4
+.byte 0,3,6,6,5,  2,256-2,256-5,256-6,256-6,  256-3 ;5
+.byte 0,5,8,9,7,  3,256-3,256-7,256-9,256-8,  256-5 ;6
+.byte 0,6,10,11,8,  3,256-3,256-8,256-11,256-10,  256-6 ;7
+.byte 0,7,12,13,10,  4,256-4,256-10,256-13,256-12,  256-7 ;8
+.byte 0,9,15,16,12,  4,256-4,256-12,256-16,256-15,  256-9 ;9
+.byte 0,10,17,19,14,  5,256-5,256-14,256-19,256-17,  256-10 ;A
+
+
 ;dummy envelope used to initialize all channels with silence
 
 _FT2DummyEnvelope:
@@ -1999,25 +2004,6 @@ _FT2NoteTableMSB:
 	.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 	.byte $00,$00,$00
 .endif
-
-
-
-Multiply:
-; **
-;a = note volume
-;x = volume column
-
-stx multiple1
-asl a
-asl a
-asl a
-asl a
-ora multiple1
-tax
-lda ft_volume_table, x
-rts
-
-.segment .concat("BANK", .string(SOUND_BANK))
 
 ft_volume_table:
 .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
