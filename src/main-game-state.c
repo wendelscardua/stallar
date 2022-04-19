@@ -23,7 +23,7 @@
 #define JUMP_GRAVITY FP(0, 0, 0x28)
 #define JUMP_IMPULSE (-FP(0, 0x03, 0x90))
 
-#define CAM_R_LIMIT FP(0, 0xa0, 0)
+#define CAM_R_LIMIT FP(0, 0x80, 0)
 #define CAM_L_LIMIT FP(0, 0x10, 0)
 
 #define PLAYER_X1 ((signed char) -3)
