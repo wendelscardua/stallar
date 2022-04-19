@@ -24,6 +24,7 @@
 #define JUMP_IMPULSE (-FP(0, 0x03, 0x90))
 
 #define CAM_R_LIMIT FP(0, 0x80, 0)
+#define CAM_R_SUB_LIMIT FP(0, 0x50, 0)
 #define CAM_L_LIMIT FP(0, 0x10, 0)
 
 #define PLAYER_X1 ((signed char) -3)
@@ -270,11 +271,13 @@ void update_camera (void) {
   set_scroll_x(0);
 
   // update camera
-  if (player_x - camera_x > CAM_R_LIMIT) {
+  if (player_x - camera_x >= CAM_R_LIMIT) {
     camera_x = player_x - CAM_R_LIMIT;
+  } else if (player_x - camera_x >= CAM_R_SUB_LIMIT && player_dx > 0) {
+    camera_x += (player_dx >> 1) + (player_dx >> 2);
   }
 
-  if (player_x - camera_x < CAM_L_LIMIT) {
+  if (player_x - camera_x <= CAM_L_LIMIT) {
     player_x = camera_x + CAM_L_LIMIT;
   }
 
