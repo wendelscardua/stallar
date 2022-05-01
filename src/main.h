@@ -28,15 +28,15 @@ extern game_state_t current_game_state;
  * e..7: integer pixel
  * 6..0: subpixel
  */
-
 // converts 3 uint8 into a single uint16
-#define FP(screen,integer,fraction) (((screen) << 15)|((integer)<<7)|((fraction)>>2))
+#define FP(screen,integer,fraction) ((signed long)((((unsigned long)screen) << 16)|(((unsigned long)integer)<<8)|((fraction))))
 
 // extract the integer part (including screen)
 // TODO: round insted of truncate?
-#define INT(unsigned_fixed_point) ((unsigned_fixed_point)>>7)
+#define INT(unsigned_fixed_point) ((unsigned int)(((unsigned_fixed_point)>>8))&0x1ff)
 
 // take just the msb, enough for some comparisons
-#define TRUNC(unsigned_fixed_point) ((unsigned_fixed_point) >> 8)
+#define TRUNC(unsigned_fixed_point) ((unsigned char)((unsigned_fixed_point) >> 8))
 
+#define SCREEN(unsigned_fixed_point) ((unsigned char)(((unsigned_fixed_point) >> 16) & 0x1))
 #endif

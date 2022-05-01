@@ -4,7 +4,7 @@ extern unsigned char arg2;
 extern unsigned char pad1;
 extern unsigned char pad1_new;
 extern unsigned char temp, i, j, k, temp_x, temp_y, temp_char, temp_attr, temp_bank;
-extern unsigned int temp_int, temp_int_x, temp_int_y;
+extern unsigned long temp_int, temp_int_x, temp_int_y;
 
 #pragma zpsym("arg1")
 #pragma zpsym("arg2")

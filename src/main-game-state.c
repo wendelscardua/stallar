@@ -15,13 +15,13 @@
 #include "../assets/levels.h"
 #include "music/soundtrack.h"
 
-#define INITIAL_H_SPEED FP(0, 1, 0x40)
+#define INITIAL_H_SPEED FP(0, 1, 0x80)
 #define MAX_H_SPEED FP(0, 2, 0)
-#define H_ACCEL FP(0, 0, 0x08)
-#define FRICTION FP(0, 0, 0x40)
-#define GRAVITY FP(0, 0, 0x50)
-#define JUMP_GRAVITY FP(0, 0, 0x28)
-#define JUMP_IMPULSE (-FP(0, 0x03, 0x90))
+#define H_ACCEL FP(0, 0, 0x10)
+#define FRICTION FP(0, 0, 0x80)
+#define GRAVITY FP(0, 0, 0xa0)
+#define JUMP_GRAVITY FP(0, 0, 0x30)
+#define JUMP_IMPULSE (-FP(0, 0x04, 0xa0))
 
 #define CAM_R_LIMIT FP(0, 0x80, 0)
 #define CAM_R_SUB_LIMIT FP(0, 0x50, 0)
@@ -43,14 +43,14 @@ unsigned char * current_level_ptr;
 unsigned char current_level_columns;
 unsigned char next_metatile_column;
 
-unsigned int player_x;
-unsigned int player_y;
-signed int player_dx;
-signed int player_dy;
+unsigned long player_x;
+unsigned long player_y;
+signed long player_dx;
+signed long player_dy;
 direction_t player_direction;
 unsigned char player_grounded;
 
-unsigned int camera_x;
+unsigned long camera_x;
 
 unsigned char next_inactive_entity;
 
@@ -78,8 +78,8 @@ unsigned char load_column_state;
 
 unsigned int collision_mask[32];
 
-unsigned int entity_x[MAX_ENTITIES];
-unsigned int entity_y[MAX_ENTITIES];
+unsigned long entity_x[MAX_ENTITIES];
+unsigned long entity_y[MAX_ENTITIES];
 void (*entity_update[MAX_ENTITIES])();
 void (*entity_render[MAX_ENTITIES])();
 entity_state_t entity_state[MAX_ENTITIES];
@@ -286,7 +286,7 @@ void update_camera (void) {
 
   // check for column loading
   temp_int_x = INT(camera_x);
-  temp_x = ((temp_int_x + 0x100) & 0x1ff) >> 4;
+  temp_x = ((((unsigned int)temp_int_x) + 0x100) & 0x1ff) >> 4;
 
   if (next_metatile_column == temp_x) {
     if (current_level_columns == 0) {
@@ -335,7 +335,7 @@ void update_death (void) {
   if (player_direction == Down) {
     if (death_counter == 0 || player_y > FP(0, 0xf0, 0x00)) {
       player_y = FP(0, 0xff, 0x00);
-      if (((TRUNC(camera_x)) & 0x7f) == 0) {
+      if (SCREEN(camera_x) == 0) {
         set_scroll_x((unsigned int)INT(camera_x));
         game_over_start();
       } else {
@@ -349,7 +349,7 @@ void update_death (void) {
 }
 
 void update_victory_lap (void) {
-  if (((TRUNC(camera_x)) & 0x7f) == 0) {
+  if (SCREEN(camera_x) == 0) {
     set_scroll_x((unsigned int)INT(camera_x));
     game_over_start();
   } else {
@@ -399,7 +399,7 @@ void main_upkeep (void) {
   double_buffer[double_buffer_index++] = 0x1f - 1;
   temp_int = INT(camera_x);
   double_buffer[double_buffer_index++] = 0xf0;
-  double_buffer[double_buffer_index++] = 0b10001000 | (TRUNC(camera_x) >= 0x80);
+  double_buffer[double_buffer_index++] = 0b10001000 | (SCREEN(camera_x));
   double_buffer[double_buffer_index++] = 0xf5;
   double_buffer[double_buffer_index++] = temp_int & 0xff;
 
