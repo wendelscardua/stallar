@@ -27,6 +27,9 @@
 #define CAM_R_SUB_LIMIT FP(0, 0x50, 0)
 #define CAM_L_LIMIT FP(0, 0x10, 0)
 
+#define SPRITE_LEFT_BORDER FP(0, 0x08, 0)
+#define SPRITE_RIGHT_BORDER FP(0, 0xf7, 0)
+
 #define PLAYER_X1 ((signed char) -3)
 #define PLAYER_X2 ((signed char) 3)
 #define PLAYER_Y1 ((signed char) -13)
@@ -420,7 +423,9 @@ void main_upkeep (void) {
 }
 
 void main_sprites (void) {
-  temp_x = INT(player_x - camera_x);
+  temp_int_x = player_x - camera_x;
+  if (temp_int_x >= SPRITE_RIGHT_BORDER) return;
+  temp_x = INT(temp_int_x);
   temp_y = INT(player_y);
   if (player_direction == Left) {
     temp_char = MSPlayer + 2;
@@ -625,7 +630,7 @@ void entity_mapgoal_update() {
 
 void entity_star_render() {
   temp_int_x = entity_x[i] - camera_x;
-  if (temp_int_x >= FP(1, 0x00, 0x00)) return;
+  if (temp_int_x >= SPRITE_RIGHT_BORDER || temp_int_x <= SPRITE_LEFT_BORDER) return;
   temp_x = INT(temp_int_x);
   temp_y = INT(entity_y[i]);
   oam_meta_spr(temp_x, temp_y, metasprite_list[4]);
@@ -633,7 +638,7 @@ void entity_star_render() {
 
 void entity_blob_render() {
   temp_int_x = entity_x[i] - camera_x;
-  if (temp_int_x >= FP(1, 0x00, 0x00)) return;
+  if (temp_int_x >= SPRITE_RIGHT_BORDER || temp_int_x <= SPRITE_LEFT_BORDER) return;
   temp_x = INT(temp_int_x);
   temp_y = INT(entity_y[i]);
   if (entity_state[i] == MoveLeft) {
@@ -641,14 +646,14 @@ void entity_blob_render() {
   } else {
     temp_char = MSBlob;
   }
-  if (temp_x & 0b100) temp_char++; // TODO relative to camera
+  if (INT(entity_x[i]) & 0b1000) temp_char++;
 
   oam_meta_spr(temp_x, temp_y, metasprite_list[temp_char]);
 }
 
 void entity_spike_render() {
   temp_int_x = entity_x[i] - camera_x;
-  if (temp_int_x >= FP(1, 0x00, 0x00)) return;
+  if (temp_int_x >= SPRITE_RIGHT_BORDER || temp_int_x <= SPRITE_LEFT_BORDER) return;
   temp_x = INT(temp_int_x);
   temp_y = INT(entity_y[i]);
   if (entity_state[i] == MoveLeft) {
@@ -656,7 +661,7 @@ void entity_spike_render() {
   } else {
     temp_char = MSSpike;
   }
-  if (temp_x & 0b100) temp_char++; // TODO relative to camera
+  if (INT(entity_x[i]) & 0b1000) temp_char++;
 
   oam_meta_spr(temp_x, temp_y, metasprite_list[temp_char]);
 }
